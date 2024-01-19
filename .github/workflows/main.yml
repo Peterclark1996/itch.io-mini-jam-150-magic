@@ -1,0 +1,31 @@
+name: Build Project and Publish
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build Project and Publish
+    runs-on: ubuntu-latest
+    concurrency: 
+      group: unity-build
+      cancel-in-progress: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library
+      - name: Build project
+        uses: game-ci/unity-builder@v2
+      - name: Deploy to Itch.io
+        uses: manleydev/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: html5
+          ITCH_GAME: ${{ env.ITCH_GAME }}
+          ITCH_USER: ${{ env.ITCH_USER }}
+          PACKAGE: build/WebGL
