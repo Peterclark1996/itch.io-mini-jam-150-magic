@@ -1,0 +1,9 @@
+public enum Floor
+{
+    LIBRARY_RED,
+    LIBRARY_BLUE,
+    LIBRARY_GREEN,
+    ALCHEMY_RED,
+    ALCHEMY_BLUE,
+    ALCHEMY_GREEN,
+}

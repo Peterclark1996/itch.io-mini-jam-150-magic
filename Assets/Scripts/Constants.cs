@@ -11,6 +11,6 @@ public class Constants : MonoBehaviour
 
     private void Awake()
     {
-        Instance = GameObject.Find("ScriptControl").GetComponent<Constants>();
+        Instance = gameObject.GetComponent<Constants>();
     }
 }
