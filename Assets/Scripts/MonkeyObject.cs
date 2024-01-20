@@ -74,6 +74,8 @@ public class MonkeyObject : MonoBehaviour
         StartMovingTo(Random.Range(Constants.Instance.LiftMaxLeftPosition, Constants.Instance.LiftMaxRightPosition));
     }
 
+    public bool isMoving() => _targetPosition.HasValue;
+
     private void Start()
     {
         _headDefaultHeight = Head.transform.position.y;
