@@ -226,7 +226,6 @@ MonoBehaviour:
   ArmRight: {fileID: 804925929562005188}
   LegLeft: {fileID: 804925928753297243}
   LegRight: {fileID: 804925928426705202}
-  SpriteEyesNormal: {fileID: 21300000, guid: 1adbebf72c7bf95409d621cbb3718c6a, type: 3}
   SpriteEyesAngry: {fileID: 21300000, guid: 288649e2561d3144e943c102899a7375, type: 3}
   SpriteLegUp: {fileID: 21300000, guid: 0b9200fef12f45146bd1ebe7bc91470e, type: 3}
   SpriteLegDown: {fileID: 21300000, guid: efcb7846726eb064f94800e2a07b35fb, type: 3}
@@ -638,7 +637,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 1adbebf72c7bf95409d621cbb3718c6a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

@@ -11,8 +11,7 @@ public class MonkeyObject : MonoBehaviour
     public GameObject ArmRight;
     public GameObject LegLeft;
     public GameObject LegRight;
-
-    public Sprite SpriteEyesNormal;
+    
     public Sprite SpriteEyesAngry;
     public Sprite SpriteLegUp;
     public Sprite SpriteLegDown;
