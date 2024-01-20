@@ -29,43 +29,43 @@ public class MonkeyObject : MonoBehaviour
     private float _bodyDefaultHeight;
     private float _itemDefaultHeight;
     private float _spawnTime;
-    private Floor _desiredFloor;
+    private FloorName _desiredFloorName;
 
     private float? _targetPosition;
 
-    public void Init(Floor desiredFloor)
+    public void Init(FloorName desiredFloorName)
     {
-        _desiredFloor = desiredFloor;
+        _desiredFloorName = desiredFloorName;
 
         var itemRenderer = Item.GetComponent<SpriteRenderer>();
-        switch (desiredFloor)
+        switch (desiredFloorName)
         {
-            case Floor.LIBRARY_RED:
+            case FloorName.LIBRARY_RED:
                 itemRenderer.sprite = SpriteItemBook;
                 itemRenderer.color = new Color(0.8f, 0.2f, 0.2f);
                 break;
-            case Floor.LIBRARY_BLUE:
+            case FloorName.LIBRARY_BLUE:
                 itemRenderer.sprite = SpriteItemBook;
                 itemRenderer.color = new Color(0.2f, 0.2f, 0.8f);
                 break;
-            case Floor.LIBRARY_GREEN:
+            case FloorName.LIBRARY_GREEN:
                 itemRenderer.sprite = SpriteItemBook;
                 itemRenderer.color = new Color(0.2f, 0.8f, 0.2f);
                 break;
-            case Floor.ALCHEMY_RED:
+            case FloorName.ALCHEMY_RED:
                 itemRenderer.sprite = SpriteItemFlask;
                 itemRenderer.color = new Color(0.8f, 0.2f, 0.2f);
                 break;
-            case Floor.ALCHEMY_BLUE:
+            case FloorName.ALCHEMY_BLUE:
                 itemRenderer.sprite = SpriteItemFlask;
                 itemRenderer.color = new Color(0.2f, 0.2f, 0.8f);
                 break;
-            case Floor.ALCHEMY_GREEN:
+            case FloorName.ALCHEMY_GREEN:
                 itemRenderer.sprite = SpriteItemFlask;
                 itemRenderer.color = new Color(0.2f, 0.8f, 0.2f);
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(desiredFloor), desiredFloor, null);
+                throw new ArgumentOutOfRangeException(nameof(desiredFloorName), desiredFloorName, null);
         }
 
         var itemPos = Item.transform.localPosition;
@@ -108,6 +108,7 @@ public class MonkeyObject : MonoBehaviour
         {
             transform.position = pos.WithX(_targetPosition.Value);
             _targetPosition = null;
+            GameControl.Instance.OnMonkeyFinishedMoving();
             return;
         }
 

@@ -1,4 +1,4 @@
-public enum Floor
+public enum FloorName
 {
     LIBRARY_RED,
     LIBRARY_BLUE,
