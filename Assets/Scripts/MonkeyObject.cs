@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 public class MonkeyObject : MonoBehaviour
@@ -18,6 +19,8 @@ public class MonkeyObject : MonoBehaviour
     public Sprite spriteLegDown;
     public Sprite spriteItemBook;
     public Sprite spriteItemFlask;
+
+    public SortingGroup sortingGroup;
 
     private const float MoveSpeed = 6.0f;
     private const float EyeOffset = 0.075f;
@@ -71,6 +74,8 @@ public class MonkeyObject : MonoBehaviour
 
         var itemPos = item.transform.localPosition;
         item.transform.localPosition = itemPos.WithX(Random.Range(0, 2) == 0 ? -ItemOffset : ItemOffset);
+
+        sortingGroup.sortingOrder = (int)item.transform.localPosition.y * 1000;
 
         StartMovingTo(Random.Range(Constants.Instance.liftMaxLeftPosition, Constants.Instance.liftMaxRightPosition));
     }
