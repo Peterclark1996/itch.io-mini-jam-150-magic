@@ -25,6 +25,7 @@ sysinfo.txt
 .idea
 .vs
 .vsconfig
+.vscode/
 Library/
 Logs/
 obj/
