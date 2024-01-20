@@ -4,20 +4,20 @@ using Random = UnityEngine.Random;
 
 public class MonkeyObject : MonoBehaviour
 {
-    public GameObject Head;
-    public GameObject Eyes;
-    public GameObject Body;
-    public GameObject ArmLeft;
-    public GameObject ArmRight;
-    public GameObject LegLeft;
-    public GameObject LegRight;
-    public GameObject Item;
+    public GameObject head;
+    public GameObject eyes;
+    public GameObject body;
+    public GameObject armLeft;
+    public GameObject armRight;
+    public GameObject legLeft;
+    public GameObject legRight;
+    public GameObject item;
 
-    public Sprite SpriteEyesAngry;
-    public Sprite SpriteLegUp;
-    public Sprite SpriteLegDown;
-    public Sprite SpriteItemBook;
-    public Sprite SpriteItemFlask;
+    public Sprite spriteEyesAngry;
+    public Sprite spriteLegUp;
+    public Sprite spriteLegDown;
+    public Sprite spriteItemBook;
+    public Sprite spriteItemFlask;
 
     private const float MoveSpeed = 6.0f;
     private const float EyeOffset = 0.075f;
@@ -25,6 +25,7 @@ public class MonkeyObject : MonoBehaviour
     private const float ItemOffset = 0.4f;
 
     private float _headDefaultHeight;
+    private float _eyesDefaultHeight;
     private float _armDefaultHeight;
     private float _bodyDefaultHeight;
     private float _itemDefaultHeight;
@@ -37,51 +38,52 @@ public class MonkeyObject : MonoBehaviour
     {
         _desiredFloorName = desiredFloorName;
 
-        var itemRenderer = Item.GetComponent<SpriteRenderer>();
+        var itemRenderer = item.GetComponent<SpriteRenderer>();
         switch (desiredFloorName)
         {
             case FloorName.LIBRARY_RED:
-                itemRenderer.sprite = SpriteItemBook;
+                itemRenderer.sprite = spriteItemBook;
                 itemRenderer.color = new Color(0.8f, 0.2f, 0.2f);
                 break;
             case FloorName.LIBRARY_BLUE:
-                itemRenderer.sprite = SpriteItemBook;
+                itemRenderer.sprite = spriteItemBook;
                 itemRenderer.color = new Color(0.2f, 0.2f, 0.8f);
                 break;
             case FloorName.LIBRARY_GREEN:
-                itemRenderer.sprite = SpriteItemBook;
+                itemRenderer.sprite = spriteItemBook;
                 itemRenderer.color = new Color(0.2f, 0.8f, 0.2f);
                 break;
             case FloorName.ALCHEMY_RED:
-                itemRenderer.sprite = SpriteItemFlask;
+                itemRenderer.sprite = spriteItemFlask;
                 itemRenderer.color = new Color(0.8f, 0.2f, 0.2f);
                 break;
             case FloorName.ALCHEMY_BLUE:
-                itemRenderer.sprite = SpriteItemFlask;
+                itemRenderer.sprite = spriteItemFlask;
                 itemRenderer.color = new Color(0.2f, 0.2f, 0.8f);
                 break;
             case FloorName.ALCHEMY_GREEN:
-                itemRenderer.sprite = SpriteItemFlask;
+                itemRenderer.sprite = spriteItemFlask;
                 itemRenderer.color = new Color(0.2f, 0.8f, 0.2f);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(desiredFloorName), desiredFloorName, null);
         }
 
-        var itemPos = Item.transform.localPosition;
-        Item.transform.localPosition = itemPos.WithX(Random.Range(0, 2) == 0 ? -ItemOffset : ItemOffset);
+        var itemPos = item.transform.localPosition;
+        item.transform.localPosition = itemPos.WithX(Random.Range(0, 2) == 0 ? -ItemOffset : ItemOffset);
 
-        StartMovingTo(Random.Range(Constants.Instance.LiftMaxLeftPosition, Constants.Instance.LiftMaxRightPosition));
+        StartMovingTo(Random.Range(Constants.Instance.liftMaxLeftPosition, Constants.Instance.liftMaxRightPosition));
     }
 
     public bool isMoving() => _targetPosition.HasValue;
 
     private void Start()
     {
-        _headDefaultHeight = Head.transform.position.y;
-        _armDefaultHeight = ArmLeft.transform.position.y;
-        _bodyDefaultHeight = Body.transform.position.y;
-        _itemDefaultHeight = Item.transform.position.y;
+        _headDefaultHeight = head.transform.localPosition.y;
+        _eyesDefaultHeight = eyes.transform.localPosition.y;
+        _armDefaultHeight = armLeft.transform.localPosition.y;
+        _bodyDefaultHeight = body.transform.localPosition.y;
+        _itemDefaultHeight = item.transform.localPosition.y;
         _spawnTime = Time.time;
     }
 
@@ -137,57 +139,55 @@ public class MonkeyObject : MonoBehaviour
 
     private void UpdateSpritesIdle()
     {
-        var eyePos = Eyes.transform.position;
-        var pos = transform.position;
+        var eyePos = eyes.transform.localPosition;
 
-        LegRight.GetComponent<SpriteRenderer>().sprite = SpriteLegDown;
-        LegLeft.GetComponent<SpriteRenderer>().sprite = SpriteLegDown;
-        Eyes.transform.position = new Vector3(pos.x, eyePos.y, eyePos.z);
+        legRight.GetComponent<SpriteRenderer>().sprite = spriteLegDown;
+        legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegDown;
+        eyes.transform.localPosition = new Vector3(0, 0, 0);
 
-        var headPos = Head.transform.position;
-        var armLeftPos = ArmLeft.transform.position;
-        var armRightPos = ArmRight.transform.position;
-        var itemPos = Item.transform.position;
-        var bodyPos = Body.transform.position;
+        var headPos = head.transform.localPosition;
+        var armLeftPos = armLeft.transform.localPosition;
+        var armRightPos = armRight.transform.localPosition;
+        var itemPos = item.transform.localPosition;
+        var bodyPos = body.transform.localPosition;
 
         if (IsFrameAlternative(2))
         {
-            Head.transform.position = headPos.WithY(_headDefaultHeight);
-            Eyes.transform.position = eyePos.WithY(_headDefaultHeight).WithX(pos.x);
-            ArmLeft.transform.position = armLeftPos.WithY(_armDefaultHeight);
-            ArmRight.transform.position = armRightPos.WithY(_armDefaultHeight);
-            Item.transform.position = itemPos.WithY(_itemDefaultHeight);
-            Body.transform.position = bodyPos.WithY(_bodyDefaultHeight);
+            head.transform.localPosition = headPos.WithY(_headDefaultHeight);
+            eyes.transform.localPosition = eyePos.WithY(_eyesDefaultHeight).WithX(0);
+            armLeft.transform.localPosition = armLeftPos.WithY(_armDefaultHeight);
+            armRight.transform.localPosition = armRightPos.WithY(_armDefaultHeight);
+            item.transform.localPosition = itemPos.WithY(_itemDefaultHeight);
+            body.transform.localPosition = bodyPos.WithY(_bodyDefaultHeight);
         }
         else
         {
-            Head.transform.position = headPos.WithY(_headDefaultHeight - BreatheOffset - BreatheOffset);
-            Eyes.transform.position = eyePos.WithY(_headDefaultHeight - BreatheOffset - BreatheOffset).WithX(pos.x);
-            ArmLeft.transform.position = armLeftPos.WithY(_armDefaultHeight - BreatheOffset);
-            ArmRight.transform.position = armRightPos.WithY(_armDefaultHeight - BreatheOffset);
-            Item.transform.position = itemPos.WithY(_itemDefaultHeight - BreatheOffset);
-            Body.transform.position = bodyPos.WithY(_bodyDefaultHeight - BreatheOffset);
+            head.transform.localPosition = headPos.WithY(_headDefaultHeight - BreatheOffset - BreatheOffset);
+            eyes.transform.localPosition = eyePos.WithY(_eyesDefaultHeight - BreatheOffset - BreatheOffset).WithX(0);
+            armLeft.transform.localPosition = armLeftPos.WithY(_armDefaultHeight - BreatheOffset);
+            armRight.transform.localPosition = armRightPos.WithY(_armDefaultHeight - BreatheOffset);
+            item.transform.localPosition = itemPos.WithY(_itemDefaultHeight - BreatheOffset);
+            body.transform.localPosition = bodyPos.WithY(_bodyDefaultHeight - BreatheOffset);
         }
     }
 
     private void UpdateSpritesWalking()
     {
-        var eyePos = Eyes.transform.localPosition;
-        var pos = transform.position;
-
         if (IsFrameAlternative(5))
         {
-            LegLeft.GetComponent<SpriteRenderer>().sprite = SpriteLegUp;
-            LegRight.GetComponent<SpriteRenderer>().sprite = SpriteLegDown;
+            legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegUp;
+            legRight.GetComponent<SpriteRenderer>().sprite = spriteLegDown;
         }
         else
         {
-            LegLeft.GetComponent<SpriteRenderer>().sprite = SpriteLegDown;
-            LegRight.GetComponent<SpriteRenderer>().sprite = SpriteLegUp;
+            legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegDown;
+            legRight.GetComponent<SpriteRenderer>().sprite = spriteLegUp;
         }
 
+        var pos = transform.position;
         var movingRight = _targetPosition > pos.x;
-        Eyes.transform.localPosition = eyePos.WithX(movingRight ? EyeOffset : -EyeOffset);
+        var eyePos = eyes.transform.localPosition;
+        eyes.transform.localPosition = eyePos.WithX(movingRight ? EyeOffset : -EyeOffset);
     }
 
     private bool IsFrameAlternative(int animationSpeed)

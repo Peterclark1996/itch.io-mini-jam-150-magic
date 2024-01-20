@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class Constants : MonoBehaviour
 {
-    public float LiftMaxLeftPosition;
-    public float LiftMaxRightPosition;
-    public float OffScreenPosition;
-    public float FloorHeight;
+    public float liftMaxLeftPosition;
+    public float liftMaxRightPosition;
+    public float offScreenPosition;
+    public float floorMinHeight;
+    public float floorMaxHeight;
     
     public static Constants Instance;
 

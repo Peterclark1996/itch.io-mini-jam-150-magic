@@ -12,7 +12,7 @@ public class GameControl : MonoBehaviour
     public GamePhase currentPhase = GamePhase.MONKEY_MOVEMENT;
     public FloorName currentFloor = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList().First();
 
-    private const float _travelTimeBetweenFloors = 1.5f;
+    private const float TravelTimeBetweenFloors = 1.5f;
 
     private readonly List<MonkeyObject> _monkeys = new();
     private readonly List<FloorName> _allFloors = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList();
@@ -22,7 +22,7 @@ public class GameControl : MonoBehaviour
     public int CountMonkeysOnLift() => _monkeys.Count(monkey =>
     {
         var monkeyX = monkey.transform.position.x;
-        return monkeyX < Constants.Instance.LiftMaxRightPosition && monkeyX > Constants.Instance.LiftMaxLeftPosition;
+        return monkeyX < Constants.Instance.liftMaxRightPosition && monkeyX > Constants.Instance.liftMaxLeftPosition;
     });
 
     public void OnMonkeyFinishedMoving()
@@ -75,7 +75,7 @@ public class GameControl : MonoBehaviour
         }
 
         var timePassed = Time.time - _floorChangedTime.Value;
-        var totalTravelDuration = Math.Abs(startIndex - targetIndex) * _travelTimeBetweenFloors;
+        var totalTravelDuration = Math.Abs(startIndex - targetIndex) * TravelTimeBetweenFloors;
         var movementProgress = timePassed / totalTravelDuration;
         var movementProgressSmoothed = Mathf.SmoothStep(0, 1, movementProgress);
 
@@ -84,7 +84,8 @@ public class GameControl : MonoBehaviour
 
     private void SpawnMonkey()
     {
-        var spawnPos = new Vector3(Constants.Instance.OffScreenPosition, Constants.Instance.FloorHeight, 0);
+        var spawnHeight = Random.Range(Constants.Instance.floorMinHeight, Constants.Instance.floorMaxHeight);
+        var spawnPos = new Vector3(Constants.Instance.offScreenPosition, spawnHeight, 0);
         var newMonkey = Instantiate(monkeyPrefab, spawnPos, new Quaternion());
         var monkeyObject = newMonkey.GetComponent<MonkeyObject>();
         _monkeys.Add(monkeyObject);
