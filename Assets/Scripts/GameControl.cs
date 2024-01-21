@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 public class GameControl : MonoBehaviour
 {
     public GameObject monkeyPrefab;
+    public GameObject monkeyManagerPrefab;
     public GameObject scorePopupPrefab;
     public GameObject backgroundObject;
 
@@ -137,7 +138,7 @@ public class GameControl : MonoBehaviour
     {
         var managerSpawnX = Constants.Instance.offScreenHorizontalPosition - SpawnDistanceBetweenPlayerAndManager;
         var managerSpawnPos = new Vector3(managerSpawnX, Constants.Instance.floorMinHeight, 0);
-        var managerMonkey = Instantiate(monkeyPrefab, managerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
+        var managerMonkey = Instantiate(monkeyManagerPrefab, managerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
         managerMonkey.Init(MonkeyType.MANAGER);
         _monkeys.Add(managerMonkey);
     }
