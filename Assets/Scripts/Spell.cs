@@ -194,6 +194,7 @@ public class Spell : MonoBehaviour
         else {
             lockedOut = true;
             lockoutStart = Time.time;
+            gameControl.GoToMonkeyMovementPhase();
         }
         lastFourKeysPressed = new List<Key>();
     }
