@@ -92,14 +92,6 @@ public class GameControl : MonoBehaviour
 
     private void Update()
     {
-        // Start Temp: handles user input, goes to a random floor
-        if (Input.GetButtonDown("Jump") && currentPhase == GamePhase.PLAYER_INPUT)
-        {
-            var allValidFloors = _allFloors.Where(floor => floor != currentFloor).ToList();
-            StartMovingTo(allValidFloors[Random.Range(0, allValidFloors.Count)]);
-        }
-        // End Temp
-
         if (_targetFloor == null || !_floorChangedTime.HasValue || currentPhase != GamePhase.LIFT_MOVEMENT) return;
 
         var startIndex = _allFloors.FindIndex(floor => floor == currentFloor);

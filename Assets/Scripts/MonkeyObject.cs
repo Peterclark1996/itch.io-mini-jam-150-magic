@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 public class MonkeyObject : MonoBehaviour
 {
     public GameObject head;
+    public GameObject anger;
     public GameObject eyes;
     public GameObject body;
     public GameObject tail;
@@ -239,6 +240,7 @@ public class MonkeyObject : MonoBehaviour
 
             armLeft.GetComponent<SpriteRenderer>().sprite = spriteArmLeftDown;
             armRight.GetComponent<SpriteRenderer>().sprite = spriteArmRightDown;
+            anger.SetActive(false);
         }
         else
         {
@@ -254,6 +256,7 @@ public class MonkeyObject : MonoBehaviour
 
             armLeft.GetComponent<SpriteRenderer>().sprite = _isAngry ? spriteArmLeftUp : spriteArmLeftDown;
             armRight.GetComponent<SpriteRenderer>().sprite = _isAngry ? spriteArmRightUp : spriteArmRightDown;
+            anger.SetActive(_isAngry);
         }
     }
 
@@ -261,6 +264,7 @@ public class MonkeyObject : MonoBehaviour
     {
         armLeft.GetComponent<SpriteRenderer>().sprite = spriteArmLeftDown;
         armRight.GetComponent<SpriteRenderer>().sprite = spriteArmRightDown;
+        anger.SetActive(false);
 
         if (IsFrameAlternative(5))
         {
