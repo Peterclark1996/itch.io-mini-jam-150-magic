@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class MonkeyObject : MonoBehaviour
 {
+    public GameObject hat;
     public GameObject head;
     public GameObject anger;
     public GameObject eyes;
@@ -43,6 +44,9 @@ public class MonkeyObject : MonoBehaviour
     public Sprite spriteItemFlaskRed;
     public Sprite spriteItemFlaskBlue;
     public Sprite spriteItemFlaskGreen;
+    public Sprite spriteHatRed;
+    public Sprite spriteHatBlue;
+    public Sprite spriteHatGreen;
 
     public SortingGroup sortingGroup;
 
@@ -53,6 +57,7 @@ public class MonkeyObject : MonoBehaviour
     private readonly Vector3 _itemRaisedOffset = new(0.2f, 0.5f, 0);
     private float _moveSpeed = 6.0f;
 
+    private Vector3 _hatDefaultPos;
     private Vector3 _headDefaultPos;
     private Vector3 _eyesDefaultPos;
     private Vector3 _armLeftDefaultPos;
@@ -74,9 +79,12 @@ public class MonkeyObject : MonoBehaviour
             case MonkeyType.PLAYER:
                 _moveSpeed = 8.0f;
                 item.GetComponent<SpriteRenderer>().enabled = false;
+                hat.GetComponent<SpriteRenderer>().enabled = false;
                 StartMovingTo(Constants.Instance.standingSpotPlayer);
                 return;
             case MonkeyType.MANAGER:
+                item.GetComponent<SpriteRenderer>().enabled = false;
+                hat.GetComponent<SpriteRenderer>().enabled = false;
                 StartMovingTo(Constants.Instance.standingSpotManager);
                 return;
             case MonkeyType.RIDER:
@@ -102,6 +110,17 @@ public class MonkeyObject : MonoBehaviour
             FloorName.ALCHEMY_RED => spriteItemFlaskRed,
             FloorName.ALCHEMY_BLUE => spriteItemFlaskBlue,
             FloorName.ALCHEMY_GREEN => spriteItemFlaskGreen,
+            _ => throw new ArgumentOutOfRangeException(nameof(desiredFloorName), desiredFloorName, null)
+        };
+        
+        hat.GetComponent<SpriteRenderer>().sprite = desiredFloorName switch
+        {
+            FloorName.LIBRARY_RED => spriteHatRed,
+            FloorName.LIBRARY_BLUE => spriteHatBlue,
+            FloorName.LIBRARY_GREEN => spriteHatGreen,
+            FloorName.ALCHEMY_RED => spriteHatRed,
+            FloorName.ALCHEMY_BLUE => spriteHatBlue,
+            FloorName.ALCHEMY_GREEN => spriteHatGreen,
             _ => throw new ArgumentOutOfRangeException(nameof(desiredFloorName), desiredFloorName, null)
         };
 
@@ -139,6 +158,7 @@ public class MonkeyObject : MonoBehaviour
 
     private void Start()
     {
+        _hatDefaultPos = hat.transform.localPosition;
         _headDefaultPos = head.transform.localPosition;
         _eyesDefaultPos = eyes.transform.localPosition;
         _armLeftDefaultPos = armLeft.transform.localPosition;
@@ -268,6 +288,7 @@ public class MonkeyObject : MonoBehaviour
 
         if (Util.IsFrameAlternative(_spawnTime, 2))
         {
+            hat.transform.localPosition = _hatDefaultPos;
             head.transform.localPosition = _headDefaultPos;
             eyes.transform.localPosition = _eyesDefaultPos;
             armLeft.transform.localPosition = _armLeftDefaultPos;
@@ -282,6 +303,7 @@ public class MonkeyObject : MonoBehaviour
         }
         else
         {
+            hat.transform.localPosition = _hatDefaultPos.WithY(_hatDefaultPos.y - BreatheOffset - BreatheOffset);
             head.transform.localPosition = _headDefaultPos.WithY(_headDefaultPos.y - BreatheOffset - BreatheOffset);
             eyes.transform.localPosition = _eyesDefaultPos.WithY(_eyesDefaultPos.y - BreatheOffset - BreatheOffset);
             armLeft.transform.localPosition = _armLeftDefaultPos.WithY(_armLeftDefaultPos.y - BreatheOffset);
@@ -320,6 +342,7 @@ public class MonkeyObject : MonoBehaviour
         eyes.transform.localPosition =
             _eyesDefaultPos.WithX(_eyesDefaultPos.x + (movingRight ? EyeOffset : -EyeOffset));
 
+        hat.transform.localPosition = _hatDefaultPos;
         head.transform.localPosition = _headDefaultPos;
         armLeft.transform.localPosition = _armLeftDefaultPos;
         armRight.transform.localPosition = _armRightDefaultPos;
