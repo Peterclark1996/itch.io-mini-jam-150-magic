@@ -134,8 +134,9 @@ public class GameControl : MonoBehaviour
 
     private void SpawnPlayerMonkey()
     {
+        var differenceInMaxAndMinHeight = Constants.Instance.floorMaxHeight - Constants.Instance.floorMinHeight;
         var playerSpawnPos = new Vector3(Constants.Instance.offScreenHorizontalPosition,
-            Constants.Instance.floorMinHeight, 0);
+            Constants.Instance.floorMinHeight + differenceInMaxAndMinHeight / 2, 0);
         var playerMonkey = Instantiate(monkeyPrefab, playerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
         playerMonkey.Init(MonkeyType.PLAYER);
         _monkeys.Add(playerMonkey);
