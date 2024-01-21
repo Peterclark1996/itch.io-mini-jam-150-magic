@@ -23,8 +23,10 @@ public class GameControl : MonoBehaviour
     public int CountMonkeysOnLift() =>
         _monkeys.Count(monkey => monkey.transform.position.x > Constants.Instance.liftMaxLeftPosition);
 
-    public void OnRiderMonkeyFinishedMoving()
+    public void OnMonkeyFinishedMoving()
     {
+        if (currentPhase != GamePhase.MONKEY_MOVEMENT) return;
+
         var areAnyMonkeysMoving = _monkeys.Any(monkey => monkey.IsMoving());
         if (areAnyMonkeysMoving) return;
 
@@ -62,7 +64,7 @@ public class GameControl : MonoBehaviour
         }
         // End Temp
 
-        if (_targetFloor == null || !_floorChangedTime.HasValue) return;
+        if (_targetFloor == null || !_floorChangedTime.HasValue || currentPhase != GamePhase.LIFT_MOVEMENT) return;
 
         var startIndex = _allFloors.FindIndex(floor => floor == currentFloor);
         var targetIndex = _allFloors.FindIndex(floor => floor == _targetFloor);

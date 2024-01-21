@@ -196,10 +196,7 @@ public class MonkeyObject : MonoBehaviour
             transform.position = pos.WithX(target);
             _targetPosition = null;
 
-            if (_monkeyType == MonkeyType.RIDER)
-            {
-                GameControl.Instance.OnRiderMonkeyFinishedMoving();
-            }
+            GameControl.Instance.OnMonkeyFinishedMoving();
 
             return;
         }
