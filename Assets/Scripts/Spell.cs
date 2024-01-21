@@ -39,15 +39,11 @@ public class Spell : MonoBehaviour
         foreach (var floor in allFloors) {
             var combination = new List<Key>() {
                 (Key)Random.Range(0, 4),
-                (Key)Random.Range(0, 4),
-                (Key)Random.Range(0, 4),
                 (Key)Random.Range(0, 4)
             };
             // to make sure we don't get two floors with the same code
             while (!floors.TryAdd(GetKeySequenceHashCode(combination), floor)) {
                 combination = new List<Key>() {
-                    (Key)Random.Range(0, 4),
-                    (Key)Random.Range(0, 4),
                     (Key)Random.Range(0, 4),
                     (Key)Random.Range(0, 4)
                 };
@@ -56,9 +52,7 @@ public class Spell : MonoBehaviour
             KeyCombination keyCombination = new KeyCombination(
                 floor,
                 combination[0],
-                combination[1],
-                combination[2],
-                combination[3]);
+                combination[1]);
             keyCombinations.Add(keyCombination);
 
             Transform label = Instantiate(FloorSprite(floor));
@@ -78,7 +72,7 @@ public class Spell : MonoBehaviour
             arrow.localScale = scale;
             arrow.localPosition = new Vector3(0.8f, floorOffset, 0);
             RotateArrow(keyCombination.Key2, arrow);
-            arrow = Instantiate(arrowPrefab);
+            /*arrow = Instantiate(arrowPrefab);
             legendSprites.Add(arrow.gameObject.GetComponent<SpriteRenderer>());
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
@@ -89,7 +83,7 @@ public class Spell : MonoBehaviour
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
             arrow.localPosition = new Vector3(2.4f, floorOffset, 0);
-            RotateArrow(keyCombination.Key4, arrow);
+            RotateArrow(keyCombination.Key4, arrow);*/
 
             floorOffset++;
         }
@@ -115,7 +109,7 @@ public class Spell : MonoBehaviour
             if (Input.GetButtonDown("Up")) {
                 lastFourKeysPressed.Add(Key.Up);
                 upArrow.color = Color.green;
-                if (lastFourKeysPressed.Count == 4)
+                if (lastFourKeysPressed.Count == 2)
                     ValidateCombination();
             }
             if (Input.GetButtonUp("Up")) {
@@ -124,7 +118,7 @@ public class Spell : MonoBehaviour
             if (Input.GetButtonDown("Down")) {
                 lastFourKeysPressed.Add(Key.Down);
                 downArrow.color = Color.green;
-                if (lastFourKeysPressed.Count == 4)
+                if (lastFourKeysPressed.Count == 2)
                     ValidateCombination();
             }
             if (Input.GetButtonUp("Down")) {
@@ -133,7 +127,7 @@ public class Spell : MonoBehaviour
             if (Input.GetButtonDown("Left")) {
                 lastFourKeysPressed.Add(Key.Left);
                 leftArrow.color = Color.green;
-                if (lastFourKeysPressed.Count == 4)
+                if (lastFourKeysPressed.Count == 2)
                     ValidateCombination();
             }
             if (Input.GetButtonUp("Left")) {
@@ -142,7 +136,7 @@ public class Spell : MonoBehaviour
             if (Input.GetButtonDown("Right")) {
                 lastFourKeysPressed.Add(Key.Right);
                 rightArrow.color = Color.green;
-                if (lastFourKeysPressed.Count == 4)
+                if (lastFourKeysPressed.Count == 2)
                     ValidateCombination();
             }
             if (Input.GetButtonUp("Right")) {
