@@ -459,6 +459,12 @@ MonoBehaviour:
   leftArrow: {fileID: 2074863979}
   rightArrow: {fileID: 546053618}
   arrowPrefab: {fileID: 4523921644240916381, guid: d945e859d54b2498b87e77fd0066d3d6, type: 3}
+  libaryRed: {fileID: 9176608028377661961, guid: 63979f28f3f3d4926a2035b8eef4078e, type: 3}
+  libraryBlue: {fileID: 4749579634664311221, guid: 63bf0df13f2eab2c7ac24280705233a0, type: 3}
+  libraryGreen: {fileID: 775144809072583325, guid: 1b22929230e65ce4e929a82fb3d68c0b, type: 3}
+  alchemyRed: {fileID: 5950895888065717109, guid: c3bd96d5a2213aa19b8297e12dc8e89e, type: 3}
+  alchemyBlue: {fileID: 6741730704261203644, guid: 162f1bc914a6cf39ea67d669f740d097, type: 3}
+  alchemyGreen: {fileID: 5793427439720706542, guid: 55cd01912216285399b1227b09d4211a, type: 3}
   gameControl: {fileID: 1938936198}
 --- !u!4 &367565362
 Transform:

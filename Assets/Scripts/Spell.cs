@@ -12,7 +12,7 @@ public class Spell : MonoBehaviour
     SpriteRenderer upArrow, downArrow, leftArrow, rightArrow;
 
     [SerializeField]
-    Transform arrowPrefab;
+    Transform arrowPrefab, libaryRed, libraryBlue, libraryGreen, alchemyRed, alchemyBlue, alchemyGreen;
 
     [SerializeField]
     GameControl gameControl;
@@ -27,7 +27,7 @@ public class Spell : MonoBehaviour
     void Awake()
     {
         List<FloorName> allFloors = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList();
-        float floorOffset = 0f;
+        float floorOffset = 1.5f;
         Vector3 scale = new Vector3(0.25f, 0.25f, 1f);
         foreach (var floor in allFloors) {
             KeyCombination keyCombination = new KeyCombination(
@@ -38,25 +38,28 @@ public class Spell : MonoBehaviour
                 (Key)Random.Range(0, 4));
             keyCombinations.Add(keyCombination);
 
+            Transform label = Instantiate(FloorSprite(floor));
+            label.SetParent(transform, false);
+            label.localPosition = new Vector3(-0.8f, floorOffset, 0);
             Transform arrow = Instantiate(arrowPrefab);
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
-            arrow.localPosition = new Vector3(0f, 1.5f + floorOffset, 0);
+            arrow.localPosition = new Vector3(0f, floorOffset, 0);
             RotateArrow(keyCombination.Key1, arrow);
             arrow = Instantiate(arrowPrefab);
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
-            arrow.localPosition = new Vector3(0.8f, 1.5f + floorOffset, 0);
+            arrow.localPosition = new Vector3(0.8f, floorOffset, 0);
             RotateArrow(keyCombination.Key2, arrow);
             arrow = Instantiate(arrowPrefab);
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
-            arrow.localPosition = new Vector3(1.6f, 1.5f + floorOffset, 0);
+            arrow.localPosition = new Vector3(1.6f, floorOffset, 0);
             RotateArrow(keyCombination.Key3, arrow);
             arrow = Instantiate(arrowPrefab);
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
-            arrow.localPosition = new Vector3(2.4f, 1.5f + floorOffset, 0);
+            arrow.localPosition = new Vector3(2.4f, floorOffset, 0);
             RotateArrow(keyCombination.Key4, arrow);
 
             floorOffset++;
@@ -141,6 +144,25 @@ public class Spell : MonoBehaviour
             case Key.Right:
                 arrow.localEulerAngles = new Vector3(0, 0, 270);
                 break;
+        }
+    }
+
+    Transform FloorSprite(FloorName floorName) {
+        switch (floorName) {
+            case FloorName.LIBRARY_RED:
+                return libaryRed;
+            case FloorName.LIBRARY_BLUE:
+                return libraryBlue;
+            case FloorName.LIBRARY_GREEN:
+                return libraryGreen;
+            case FloorName.ALCHEMY_RED:
+                return alchemyRed;
+            case FloorName.ALCHEMY_BLUE:
+                return alchemyBlue;
+            case FloorName.ALCHEMY_GREEN:
+                return alchemyGreen;
+            default:
+                return libaryRed;
         }
     }
 
