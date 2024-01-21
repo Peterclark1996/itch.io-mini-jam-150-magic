@@ -18,6 +18,14 @@ public class MonkeyObject : MonoBehaviour
     public GameObject item;
     public GameObject speechBubble;
     public TextMeshPro speechTextMesh;
+    public AudioSource audioSource;
+
+    public AudioClip audioTalking1;
+    public AudioClip audioTalking2;
+    public AudioClip audioAngry1;
+    public AudioClip audioAngry2;
+    public AudioClip audioHappy1;
+    public AudioClip audioHappy2;
 
     public Sprite spriteEyesNormal;
     public Sprite spriteEyesAngry;
@@ -40,9 +48,11 @@ public class MonkeyObject : MonoBehaviour
 
     private const float EyeOffset = 0.03f;
     private const float BreatheOffset = 0.03f;
-
+    private const float AudioPitchRange = 0.2f;
+    private const float AudioMaxDelay = 0.5f;
     private readonly Vector3 _itemRaisedOffset = new(0.2f, 0.5f, 0);
     private float _moveSpeed = 6.0f;
+    
     private Vector3 _headDefaultPos;
     private Vector3 _eyesDefaultPos;
     private Vector3 _armLeftDefaultPos;
@@ -117,10 +127,13 @@ public class MonkeyObject : MonoBehaviour
             GameControl.Instance.AwardScore(_isAngry, gameObject.transform.position);
             _isAngry = false;
             StartMovingTo(Constants.Instance.offScreenHorizontalPosition);
-            return;
+        }
+        else
+        {
+            _isAngry = true;
         }
 
-        _isAngry = true;
+        MakeNoise();
     }
 
     private void Start()
@@ -164,6 +177,8 @@ public class MonkeyObject : MonoBehaviour
         var playerFailed = GameControl.Instance.currentPhase == GamePhase.PLAYER_FAILED;
         if (GameControl.Instance.currentPhase != GamePhase.INTRO && !playerFailed) return;
 
+        _isAngry = playerFailed;
+
         if (_managerIntroConversationStage > 2)
         {
             speechBubble.SetActive(false);
@@ -184,9 +199,12 @@ public class MonkeyObject : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             _managerIntroConversationStage++;
-        }
 
-        _isAngry = playerFailed;
+            if (_managerIntroConversationStage <= 2)
+            {
+                MakeNoise();
+            }
+        }
 
         speechBubble.SetActive(true);
         speechTextMesh.text = _managerIntroConversationStage switch
@@ -214,6 +232,10 @@ public class MonkeyObject : MonoBehaviour
             if ((int) target == (int) Constants.Instance.offScreenHorizontalPosition)
             {
                 GameControl.Instance.DestroyMonkey(this);
+            }
+            else if (_monkeyType == MonkeyType.MANAGER)
+            {
+                MakeNoise();
             }
 
             return;
@@ -294,5 +316,30 @@ public class MonkeyObject : MonoBehaviour
     {
         var aliveTime = Time.time - _spawnTime;
         return aliveTime * animationSpeed % 2 < 1;
+    }
+
+    private void MakeNoise()
+    {
+        audioSource.Stop();
+
+        if (_isAngry)
+        {
+            audioSource.clip = Util.RandomBool() ? audioAngry1 : audioAngry2;
+        }
+        else
+        {
+            if (_monkeyType == MonkeyType.MANAGER)
+            {
+                audioSource.clip = Util.RandomBool() ? audioTalking1 : audioTalking2;
+            }
+            else
+            {
+                audioSource.clip = Util.RandomBool() ? audioHappy1 : audioHappy2;
+            }
+        }
+
+        audioSource.pitch = Random.Range(1 - AudioPitchRange, 1 + AudioPitchRange);
+
+        audioSource.PlayDelayed(Random.Range(0, AudioMaxDelay));
     }
 }
