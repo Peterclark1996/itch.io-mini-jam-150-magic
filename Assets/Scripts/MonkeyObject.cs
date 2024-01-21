@@ -245,9 +245,9 @@ public class MonkeyObject : MonoBehaviour
         speechBubble.SetActive(true);
         speechTextMesh.text = _managerIntroConversationStage switch
         {
-            0 => playerFailed ? "The lift was too heavy, this is a disaster!" : "Take the monkeys to their floor",
-            1 => playerFailed ? "You're fired!" : "The lifts weight is what matters!",
-            2 => "Light is the way!!!",
+            0 => playerFailed ? "LIFT TOO HEAVY, THIS BAD!" : "TAKE MONKEY TO FLOOR",
+            1 => playerFailed ? "YOU FIRED!" : "LIFT WEIGHT MATTER!",
+            2 => "LIGHT IS THE WAY!!!",
             _ => ""
         };
     }
