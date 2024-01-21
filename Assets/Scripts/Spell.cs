@@ -1,6 +1,8 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 using static Util;
 
@@ -8,14 +10,26 @@ public class Spell : MonoBehaviour
 {
     [SerializeField]
     SpriteRenderer upArrow, downArrow, leftArrow, rightArrow;
-
-    [SerializeField]
-    Dictionary<int, FloorName> floors = new Dictionary<int, FloorName>();
     
+    Dictionary<int, FloorName> floors = new Dictionary<int, FloorName>();
     List<Key> lastFourKeysPressed = new List<Key>();
 
     float lockoutStart;
     bool lockedOut;
+
+    void Awake()
+    {
+        List<FloorName> allFloors = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList();
+        foreach (var floor in allFloors) {
+            var combination = new List<Key>() {
+                (Key)Random.Range(0, 4),
+                (Key)Random.Range(0, 4),
+                (Key)Random.Range(0, 4),
+                (Key)Random.Range(0, 4)
+            };
+            floors.Add(GetKeySequenceHashCode(combination), floor);
+        }
+    }
 
     // Update is called once per frame
     void Update()
