@@ -14,6 +14,7 @@ public class MonkeyObject : MonoBehaviour
     public GameObject legRight;
     public GameObject item;
 
+    public Sprite spriteEyesNormal;
     public Sprite spriteEyesAngry;
     public Sprite spriteLegUp;
     public Sprite spriteLegDown;
@@ -25,7 +26,8 @@ public class MonkeyObject : MonoBehaviour
     private const float MoveSpeed = 6.0f;
     private const float EyeOffset = 0.075f;
     private const float BreatheOffset = 0.05f;
-    private const float ItemOffset = 0.4f;
+    private const float ItemHorizontalOffset = 0.4f;
+    private const float ItemRaisedOffset = 0.5f;
 
     private float _headDefaultHeight;
     private float _eyesDefaultHeight;
@@ -34,8 +36,8 @@ public class MonkeyObject : MonoBehaviour
     private float _itemDefaultHeight;
     private float _spawnTime;
     private FloorName _desiredFloorName;
-
     private float? _targetPosition;
+    private bool _isAngry;
 
     public void Init(FloorName desiredFloorName)
     {
@@ -73,14 +75,26 @@ public class MonkeyObject : MonoBehaviour
         }
 
         var itemPos = item.transform.localPosition;
-        item.transform.localPosition = itemPos.WithX(Random.Range(0, 2) == 0 ? -ItemOffset : ItemOffset);
+        item.transform.localPosition = itemPos.WithX(Util.RandomBool() ? -ItemHorizontalOffset : ItemHorizontalOffset);
 
-        sortingGroup.sortingOrder = (int)item.transform.localPosition.y * 1000;
+        sortingGroup.sortingOrder = (int) itemPos.y * 1000;
 
         StartMovingTo(Random.Range(Constants.Instance.liftMaxLeftPosition, Constants.Instance.liftMaxRightPosition));
     }
 
-    public bool isMoving() => _targetPosition.HasValue;
+    public bool IsMoving() => _targetPosition.HasValue;
+
+    public void OnLiftArrivedAtFloor()
+    {
+        if (GameControl.Instance.currentFloor == _desiredFloorName)
+        {
+            _isAngry = false;
+            StartMovingTo(Constants.Instance.offScreenPosition);
+            return;
+        }
+
+        _isAngry = true;
+    }
 
     private void Start()
     {
@@ -92,15 +106,23 @@ public class MonkeyObject : MonoBehaviour
         _spawnTime = Time.time;
     }
 
+    private void StartMovingTo(float newPosition) => _targetPosition = newPosition;
+
     private void Update()
     {
         UpdateMovement();
-        UpdateSprites();
-    }
 
-    private void StartMovingTo(float newPosition)
-    {
-        _targetPosition = newPosition;
+        var isMoving = _targetPosition.HasValue;
+        if (isMoving)
+        {
+            UpdateSpritesWalking();
+        }
+        else
+        {
+            UpdateSpritesIdle();
+        }
+
+        eyes.GetComponent<SpriteRenderer>().sprite = _isAngry ? spriteEyesAngry : spriteEyesNormal;
     }
 
     private void UpdateMovement()
@@ -129,19 +151,6 @@ public class MonkeyObject : MonoBehaviour
         }
     }
 
-    private void UpdateSprites()
-    {
-        var isMoving = _targetPosition.HasValue;
-        if (isMoving)
-        {
-            UpdateSpritesWalking();
-        }
-        else
-        {
-            UpdateSpritesIdle();
-        }
-    }
-
     private void UpdateSpritesIdle()
     {
         var eyePos = eyes.transform.localPosition;
@@ -164,6 +173,9 @@ public class MonkeyObject : MonoBehaviour
             armRight.transform.localPosition = armRightPos.WithY(_armDefaultHeight);
             item.transform.localPosition = itemPos.WithY(_itemDefaultHeight);
             body.transform.localPosition = bodyPos.WithY(_bodyDefaultHeight);
+
+            armLeft.transform.eulerAngles = new Vector3(0, 0, 0);
+            armRight.transform.eulerAngles = new Vector3(0, 180, 0);
         }
         else
         {
@@ -171,8 +183,17 @@ public class MonkeyObject : MonoBehaviour
             eyes.transform.localPosition = eyePos.WithY(_eyesDefaultHeight - BreatheOffset - BreatheOffset).WithX(0);
             armLeft.transform.localPosition = armLeftPos.WithY(_armDefaultHeight - BreatheOffset);
             armRight.transform.localPosition = armRightPos.WithY(_armDefaultHeight - BreatheOffset);
-            item.transform.localPosition = itemPos.WithY(_itemDefaultHeight - BreatheOffset);
             body.transform.localPosition = bodyPos.WithY(_bodyDefaultHeight - BreatheOffset);
+
+            if (!_isAngry)
+            {
+                item.transform.localPosition = itemPos.WithY(_itemDefaultHeight - BreatheOffset);
+                return;
+            }
+
+            item.transform.localPosition = itemPos.WithY(_itemDefaultHeight - BreatheOffset + ItemRaisedOffset);
+            armLeft.transform.eulerAngles = new Vector3(180, 0, 0);
+            armRight.transform.eulerAngles = new Vector3(180, 180, 0);
         }
     }
 
@@ -191,8 +212,18 @@ public class MonkeyObject : MonoBehaviour
 
         var pos = transform.position;
         var movingRight = _targetPosition > pos.x;
-        var eyePos = eyes.transform.localPosition;
-        eyes.transform.localPosition = eyePos.WithX(movingRight ? EyeOffset : -EyeOffset);
+        eyes.transform.localPosition = eyes.transform.localPosition
+            .WithX(movingRight ? EyeOffset : -EyeOffset)
+            .WithY(_eyesDefaultHeight);
+
+        head.transform.localPosition = head.transform.localPosition.WithY(_headDefaultHeight);
+        armLeft.transform.localPosition = armLeft.transform.localPosition.WithY(_armDefaultHeight);
+        armRight.transform.localPosition = armRight.transform.localPosition.WithY(_armDefaultHeight);
+        item.transform.localPosition = item.transform.localPosition.WithY(_itemDefaultHeight);
+        body.transform.localPosition = body.transform.localPosition.WithY(_bodyDefaultHeight);
+
+        armLeft.transform.eulerAngles = new Vector3(0, 0, 0);
+        armRight.transform.eulerAngles = new Vector3(0, 180, 0);
     }
 
     private bool IsFrameAlternative(int animationSpeed)

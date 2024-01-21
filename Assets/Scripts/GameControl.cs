@@ -27,7 +27,7 @@ public class GameControl : MonoBehaviour
 
     public void OnMonkeyFinishedMoving()
     {
-        var areAnyMonkeysMoving = _monkeys.Any(monkey => monkey.isMoving());
+        var areAnyMonkeysMoving = _monkeys.Any(monkey => monkey.IsMoving());
         if (areAnyMonkeysMoving) return;
 
         currentPhase = GamePhase.PLAYER_INPUT;
@@ -67,6 +67,11 @@ public class GameControl : MonoBehaviour
             currentFloor = _targetFloor.Value;
             _targetFloor = null;
             _floorChangedTime = null;
+            
+            foreach (var monkeyObject in _monkeys)
+            {
+                monkeyObject.OnLiftArrivedAtFloor();
+            }
 
             currentPhase = GamePhase.MONKEY_MOVEMENT;
             SpawnMonkey();
@@ -89,7 +94,9 @@ public class GameControl : MonoBehaviour
         var newMonkey = Instantiate(monkeyPrefab, spawnPos, new Quaternion());
         var monkeyObject = newMonkey.GetComponent<MonkeyObject>();
         _monkeys.Add(monkeyObject);
-        var desiredFloor = _allFloors[Random.Range(0, _allFloors.Count)];
+        
+        var allValidFloors = _allFloors.Where(floor => floor != currentFloor).ToList();
+        var desiredFloor = allValidFloors[Random.Range(0, allValidFloors.Count)];
         monkeyObject.Init(desiredFloor);
     }
 

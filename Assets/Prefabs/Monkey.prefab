@@ -313,6 +313,7 @@ MonoBehaviour:
   legLeft: {fileID: 804925928753297243}
   legRight: {fileID: 804925928426705202}
   item: {fileID: 441986395996797970}
+  spriteEyesNormal: {fileID: 21300000, guid: 1adbebf72c7bf95409d621cbb3718c6a, type: 3}
   spriteEyesAngry: {fileID: 21300000, guid: 288649e2561d3144e943c102899a7375, type: 3}
   spriteLegUp: {fileID: 21300000, guid: 0b9200fef12f45146bd1ebe7bc91470e, type: 3}
   spriteLegDown: {fileID: 21300000, guid: efcb7846726eb064f94800e2a07b35fb, type: 3}

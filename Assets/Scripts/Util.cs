@@ -22,4 +22,6 @@ public static class Util
         return keys.Aggregate(487, (current, item) =>
             (current * 31) + item.GetHashCode());
     }
+    
+    public static bool RandomBool() => Random.Range(0, 2) == 0;
 }
