@@ -54,7 +54,7 @@ public class MonkeyObject : MonoBehaviour
     private const float BreatheOffset = 0.03f;
     private const float AudioPitchRange = 0.2f;
     private const float AudioMaxDelay = 0.5f;
-    private const float AudioVolume = 0.25f;
+    private const float AudioVolume = 0.2f;
     private readonly Vector3 _itemRaisedOffset = new(0.2f, 0.5f, 0);
     private float _moveSpeed = 6.0f;
 
