@@ -30,12 +30,28 @@ public class Spell : MonoBehaviour
         float floorOffset = 1.5f;
         Vector3 scale = new Vector3(0.25f, 0.25f, 1f);
         foreach (var floor in allFloors) {
+            var combination = new List<Key>() {
+                (Key)Random.Range(0, 4),
+                (Key)Random.Range(0, 4),
+                (Key)Random.Range(0, 4),
+                (Key)Random.Range(0, 4)
+            };
+            // to make sure we don't get two floors with the same code
+            while (!floors.TryAdd(GetKeySequenceHashCode(combination), floor)) {
+                combination = new List<Key>() {
+                    (Key)Random.Range(0, 4),
+                    (Key)Random.Range(0, 4),
+                    (Key)Random.Range(0, 4),
+                    (Key)Random.Range(0, 4)
+                };
+            }
+
             KeyCombination keyCombination = new KeyCombination(
                 floor,
-                (Key)Random.Range(0, 4),
-                (Key)Random.Range(0, 4),
-                (Key)Random.Range(0, 4),
-                (Key)Random.Range(0, 4));
+                combination[0],
+                combination[1],
+                combination[2],
+                combination[3]);
             keyCombinations.Add(keyCombination);
 
             Transform label = Instantiate(FloorSprite(floor));
@@ -63,14 +79,6 @@ public class Spell : MonoBehaviour
             RotateArrow(keyCombination.Key4, arrow);
 
             floorOffset++;
-
-            var combination = new List<Key>() {
-                keyCombination.Key1,
-                keyCombination.Key2,
-                keyCombination.Key3,
-                keyCombination.Key4
-            };
-            floors.Add(GetKeySequenceHashCode(combination), floor);
         }
     }
 
