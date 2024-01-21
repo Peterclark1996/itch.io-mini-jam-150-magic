@@ -12,6 +12,8 @@ public class GameControl : MonoBehaviour
     public GameObject monkeyPlayerPrefab;
     public GameObject scorePopupPrefab;
     public GameObject backgroundObject;
+    public AudioSource music;
+    public AudioSource dingSoundEffect;
 
     public GamePhase currentPhase = GamePhase.INTRO;
     public FloorName currentFloor = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList().First();
@@ -86,6 +88,7 @@ public class GameControl : MonoBehaviour
 
     public void GoToMonkeyMovementPhase()
     {
+        music.Stop();
         currentPhase = GamePhase.MONKEY_MOVEMENT;
         SpawnRiderMonkey();
     }
@@ -136,6 +139,7 @@ public class GameControl : MonoBehaviour
                 monkeyObject.OnLiftArrivedAtFloor();
             }
 
+            dingSoundEffect.Play();
             GoToMonkeyMovementPhase();
 
             return;
@@ -182,11 +186,12 @@ public class GameControl : MonoBehaviour
         monkeyObject.Init(MonkeyType.RIDER, desiredFloor);
     }
 
-    public void StartMovingTo(FloorName targetFloorName)
+    public void StartLiftMovingTo(FloorName targetFloorName)
     {
         if (targetFloorName == currentFloor) return;
 
         currentPhase = GamePhase.LIFT_MOVEMENT;
+        music.Play();
         _targetFloor = targetFloorName;
         _floorChangedTime = Time.time;
     }

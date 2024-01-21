@@ -203,7 +203,7 @@ public class Spell : MonoBehaviour
     void ValidateCombination() {
         FloorName targetFloor;
         if (floors.TryGetValue(GetKeySequenceHashCode(lastFourKeysPressed), out targetFloor)) {
-            gameControl.StartMovingTo(targetFloor);
+            gameControl.StartLiftMovingTo(targetFloor);
         }
         else {
             lockedOut = true;
