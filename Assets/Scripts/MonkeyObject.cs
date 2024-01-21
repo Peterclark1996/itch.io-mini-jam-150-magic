@@ -226,6 +226,7 @@ public class MonkeyObject : MonoBehaviour
             else
             {
                 GameControl.Instance.GoToMonkeyMovementPhase();
+                Spell.Instance.StartFading();
             }
 
             StartMovingTo(Constants.Instance.offScreenHorizontalPosition);

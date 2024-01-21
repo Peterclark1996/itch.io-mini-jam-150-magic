@@ -20,12 +20,19 @@ public class Spell : MonoBehaviour
     List<KeyCombination> keyCombinations = new List<KeyCombination>();
     Dictionary<int, FloorName> floors = new Dictionary<int, FloorName>();
     List<Key> lastFourKeysPressed = new List<Key>();
+    List<SpriteRenderer> legendSprites = new List<SpriteRenderer>();
 
     float lockoutStart;
     bool lockedOut;
 
+    float fadingStartedTime;
+    bool fadingStarted;
+
+    public static Spell Instance;
+
     void Awake()
     {
+        Instance = gameObject.GetComponent<Spell>();
         List<FloorName> allFloors = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList();
         float floorOffset = 1.5f;
         Vector3 scale = new Vector3(0.25f, 0.25f, 1f);
@@ -55,24 +62,30 @@ public class Spell : MonoBehaviour
             keyCombinations.Add(keyCombination);
 
             Transform label = Instantiate(FloorSprite(floor));
+            legendSprites.Add(label.gameObject.GetComponent<SpriteRenderer>());
+            SpriteRenderer sprite = label.gameObject.GetComponent<SpriteRenderer>();
             label.SetParent(transform, false);
             label.localPosition = new Vector3(-0.8f, floorOffset, 0);
             Transform arrow = Instantiate(arrowPrefab);
+            legendSprites.Add(arrow.gameObject.GetComponent<SpriteRenderer>());
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
             arrow.localPosition = new Vector3(0f, floorOffset, 0);
             RotateArrow(keyCombination.Key1, arrow);
             arrow = Instantiate(arrowPrefab);
+            legendSprites.Add(arrow.gameObject.GetComponent<SpriteRenderer>());
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
             arrow.localPosition = new Vector3(0.8f, floorOffset, 0);
             RotateArrow(keyCombination.Key2, arrow);
             arrow = Instantiate(arrowPrefab);
+            legendSprites.Add(arrow.gameObject.GetComponent<SpriteRenderer>());
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
             arrow.localPosition = new Vector3(1.6f, floorOffset, 0);
             RotateArrow(keyCombination.Key3, arrow);
             arrow = Instantiate(arrowPrefab);
+            legendSprites.Add(arrow.gameObject.GetComponent<SpriteRenderer>());
             arrow.SetParent(transform, false);
             arrow.localScale = scale;
             arrow.localPosition = new Vector3(2.4f, floorOffset, 0);
@@ -85,6 +98,13 @@ public class Spell : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (fadingStarted) {
+            float newAlpha = 1f - (0.02f * (Time.time - fadingStartedTime));
+            foreach (SpriteRenderer sprite in legendSprites) {
+                sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, newAlpha);
+            }
+        }
+
         if (!lockedOut && gameControl.currentPhase == GamePhase.PLAYER_INPUT) {
             if (upArrow.color == Color.grey) {
                 upArrow.color = Color.white;
@@ -197,5 +217,10 @@ public class Spell : MonoBehaviour
             gameControl.GoToMonkeyMovementPhase();
         }
         lastFourKeysPressed = new List<Key>();
+    }
+
+    public void StartFading() {
+        fadingStartedTime = Time.time;
+        fadingStarted = true;
     }
 }
