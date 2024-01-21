@@ -19,6 +19,7 @@ public class GameControl : MonoBehaviour
     private const float TravelTimeBetweenFloors = 1.5f;
     private const float SpawnDistanceBetweenPlayerAndManager = 3.0f;
     private const float ScorePopupOffset = 3.0f;
+    private const float LiftFailureJiggleOffset = 0.02f;
 
     private readonly List<MonkeyObject> _monkeys = new();
     private readonly List<FloorName> _allFloors = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList();
@@ -103,6 +104,19 @@ public class GameControl : MonoBehaviour
 
     private void Update()
     {
+        var roundedHeightValue = (float) (Math.Round(backgroundObject.transform.position.y / 10) * 10);
+        if (currentPhase == GamePhase.LIFT_MOVEMENT_FAILED)
+        {
+            var newHeight = roundedHeightValue +
+                            (Util.IsFrameAlternative(1, 6) ? LiftFailureJiggleOffset : -LiftFailureJiggleOffset);
+            backgroundObject.transform.position = backgroundObject.transform.position.WithY(newHeight);
+        }
+
+        if (currentPhase == GamePhase.PLAYER_FAILED)
+        {
+            backgroundObject.transform.position = backgroundObject.transform.position.WithY(roundedHeightValue);
+        }
+
         if (_targetFloor == null || !_floorChangedTime.HasValue || currentPhase != GamePhase.LIFT_MOVEMENT) return;
 
         var startIndex = _allFloors.FindIndex(floor => floor == currentFloor);
@@ -138,7 +152,8 @@ public class GameControl : MonoBehaviour
     {
         var managerSpawnX = Constants.Instance.offScreenHorizontalPosition - SpawnDistanceBetweenPlayerAndManager;
         var managerSpawnPos = new Vector3(managerSpawnX, Constants.Instance.floorMinHeight, 0);
-        var managerMonkey = Instantiate(monkeyManagerPrefab, managerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
+        var managerMonkey = Instantiate(monkeyManagerPrefab, managerSpawnPos, new Quaternion())
+            .GetComponent<MonkeyObject>();
         managerMonkey.Init(MonkeyType.MANAGER);
         _monkeys.Add(managerMonkey);
     }

@@ -266,7 +266,7 @@ public class MonkeyObject : MonoBehaviour
         legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegLeftDown;
         eyes.transform.localPosition = new Vector3(0, 0, 0);
 
-        if (IsFrameAlternative(2))
+        if (Util.IsFrameAlternative(_spawnTime, 2))
         {
             head.transform.localPosition = _headDefaultPos;
             eyes.transform.localPosition = _eyesDefaultPos;
@@ -304,7 +304,7 @@ public class MonkeyObject : MonoBehaviour
         armRight.GetComponent<SpriteRenderer>().sprite = spriteArmRightDown;
         anger.SetActive(false);
 
-        if (IsFrameAlternative(5))
+        if (Util.IsFrameAlternative(_spawnTime, 5))
         {
             legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegLeftUp;
             legRight.GetComponent<SpriteRenderer>().sprite = spriteLegRightDown;
@@ -326,12 +326,6 @@ public class MonkeyObject : MonoBehaviour
         item.transform.localPosition = _itemDefaultPos;
         body.transform.localPosition = _bodyDefaultPos;
         tail.transform.localPosition = _tailDefaultPos;
-    }
-
-    private bool IsFrameAlternative(int animationSpeed)
-    {
-        var aliveTime = Time.time - _spawnTime;
-        return aliveTime * animationSpeed % 2 < 1;
     }
 
     private void MakeNoise()

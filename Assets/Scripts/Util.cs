@@ -24,4 +24,10 @@ public static class Util
     }
     
     public static bool RandomBool() => Random.Range(0, 2) == 0;
+    
+    public static bool IsFrameAlternative(float spawnTime, int animationSpeed)
+    {
+        var aliveTime = Time.time - spawnTime;
+        return aliveTime * animationSpeed % 2 < 1;
+    }
 }
