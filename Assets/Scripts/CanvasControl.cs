@@ -1,28 +1,32 @@
-using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CanvasControl : MonoBehaviour
 {
-    public GameObject DarknessObject;
-    public GameObject ScoreObject;
-    public GameObject RetryButtonObject;
-    public GameObject VisionMaskObject;
+    public GameObject darknessObject;
+    public GameObject scoreObject;
+    public GameObject retryButtonObject;
+    public GameObject visionMaskObject;
 
     private void Update()
     {
+        scoreObject.GetComponent<TextMeshProUGUI>().text = $"Score: {GameControl.Instance.score}";
+        visionMaskObject.SetActive(true);
+
         if (GameControl.Instance.currentPhase == GamePhase.GAME_OVER_SCREEN)
         {
-            DarknessObject.SetActive(true);
-            ScoreObject.SetActive(true);
-            RetryButtonObject.SetActive(true);
-            VisionMaskObject.SetActive(false);
+            darknessObject.SetActive(true);
+            scoreObject.SetActive(true);
+            retryButtonObject.SetActive(true);
         }
         else
         {
-            DarknessObject.SetActive(false);
-            ScoreObject.SetActive(false);
-            RetryButtonObject.SetActive(false);
-            VisionMaskObject.SetActive(true);
+            darknessObject.SetActive(false);
+            scoreObject.SetActive(false);
+            retryButtonObject.SetActive(false);
         }
     }
+
+    public void OnTryAgainPressed() => SceneManager.LoadScene("main");
 }

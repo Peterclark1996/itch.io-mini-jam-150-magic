@@ -115,7 +115,7 @@ public class MonkeyObject : MonoBehaviour
         if (_monkeyType != MonkeyType.RIDER) return;
 
         _isAngry = true;
-        StartMovingTo(Constants.Instance.offScreenPosition);
+        StartMovingTo(Constants.Instance.offScreenHorizontalPosition);
     }
 
     public void OnLiftArrivedAtFloor()
@@ -124,8 +124,9 @@ public class MonkeyObject : MonoBehaviour
 
         if (GameControl.Instance.currentFloor == _desiredFloorName)
         {
+            GameControl.Instance.AwardScore(_isAngry, gameObject.transform.position);
             _isAngry = false;
-            StartMovingTo(Constants.Instance.offScreenPosition);
+            StartMovingTo(Constants.Instance.offScreenHorizontalPosition);
             return;
         }
 
@@ -184,7 +185,7 @@ public class MonkeyObject : MonoBehaviour
                 GameControl.Instance.GoToMonkeyMovementPhase();
             }
 
-            StartMovingTo(Constants.Instance.offScreenPosition);
+            StartMovingTo(Constants.Instance.offScreenHorizontalPosition);
             return;
         }
 
@@ -198,7 +199,7 @@ public class MonkeyObject : MonoBehaviour
         speechBubble.SetActive(true);
         speechTextMesh.text = _managerIntroConversationStage switch
         {
-            0 => playerFailed ? "The lift is too heavy, this is a disaster!" : "Take the monkey to their floor",
+            0 => playerFailed ? "The lift was too heavy, this is a disaster!" : "Take the monkeys to their floor",
             1 => playerFailed ? "You're fired!" : "The lifts weight is what matters!",
             2 => "Light is the way!!!",
             _ => ""
@@ -218,7 +219,7 @@ public class MonkeyObject : MonoBehaviour
 
             GameControl.Instance.OnMonkeyFinishedMoving();
 
-            if ((int) target == (int) Constants.Instance.offScreenPosition)
+            if ((int) target == (int) Constants.Instance.offScreenHorizontalPosition)
             {
                 GameControl.Instance.DestroyMonkey(this);
             }

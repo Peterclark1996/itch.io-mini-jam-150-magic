@@ -224,7 +224,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &106620727
 RectTransform:
   m_ObjectHideFlags: 0
@@ -793,9 +793,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1344809413}
+  - {fileID: 1412539482}
   - {fileID: 106620727}
   - {fileID: 1858281710}
-  - {fileID: 1412539482}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -815,10 +815,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55402b196d974fc49802ca43cc751026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DarknessObject: {fileID: 1344809412}
-  ScoreObject: {fileID: 106620726}
-  RetryButtonObject: {fileID: 1858281709}
-  VisionMaskObject: {fileID: 1412539481}
+  darknessObject: {fileID: 1344809412}
+  scoreObject: {fileID: 106620726}
+  retryButtonObject: {fileID: 1858281709}
+  visionMaskObject: {fileID: 1412539481}
 --- !u!1 &688899565
 GameObject:
   m_ObjectHideFlags: 0
@@ -1180,7 +1180,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1344809413
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1426,7 +1426,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1412539482
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1819,7 +1819,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1858281710
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1883,7 +1883,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1858281712}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 654575406}
+        m_TargetAssemblyTypeName: CanvasControl, Assembly-CSharp
+        m_MethodName: OnTryAgainPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1858281712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2087,9 +2099,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monkeyPrefab: {fileID: 804925928702810796, guid: 49b8b616942301a43b81917110f8cac9, type: 3}
+  scorePopupPrefab: {fileID: 3316052647352501412, guid: 220000e2a9e0c224eb712c5a5d5790ca, type: 3}
   backgroundObject: {fileID: 873074883}
   currentPhase: 0
   currentFloor: 0
+  score: 0
 --- !u!4 &1938936199
 Transform:
   m_ObjectHideFlags: 0
@@ -2119,7 +2133,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   liftMaxLeftPosition: -4
   liftMaxRightPosition: 2
-  offScreenPosition: -14
+  offScreenHorizontalPosition: -13
+  offScreenVerticalPosition: -10
   floorMinHeight: -3
   floorMaxHeight: -2.5
   standingSpotManager: -3

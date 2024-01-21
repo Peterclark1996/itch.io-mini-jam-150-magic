@@ -4,7 +4,8 @@ public class Constants : MonoBehaviour
 {
     public float liftMaxLeftPosition;
     public float liftMaxRightPosition;
-    public float offScreenPosition;
+    public float offScreenHorizontalPosition;
+    public float offScreenVerticalPosition;
     public float floorMinHeight;
     public float floorMaxHeight;
     public float standingSpotManager;

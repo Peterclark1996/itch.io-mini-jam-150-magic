@@ -7,18 +7,32 @@ using Random = UnityEngine.Random;
 public class GameControl : MonoBehaviour
 {
     public GameObject monkeyPrefab;
+    public GameObject scorePopupPrefab;
     public GameObject backgroundObject;
 
     public GamePhase currentPhase = GamePhase.INTRO;
     public FloorName currentFloor = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList().First();
+    public int score;
 
     private const float TravelTimeBetweenFloors = 1.5f;
-    private const float DistanceBetweenPlayerAndManager = 3.0f;
+    private const float SpawnDistanceBetweenPlayerAndManager = 3.0f;
+    private const float ScorePopupOffset = 3.0f;
 
     private readonly List<MonkeyObject> _monkeys = new();
     private readonly List<FloorName> _allFloors = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList();
     private FloorName? _targetFloor;
     private float? _floorChangedTime;
+
+    public void AwardScore(bool wasLate, Vector3 monkeyPosition)
+    {
+        var scoreToAdd = wasLate ? 30 : 100;
+
+        var spawnPosition = monkeyPosition.WithY(monkeyPosition.y + ScorePopupOffset);
+        var scorePopupObject = Instantiate(scorePopupPrefab, spawnPosition, new Quaternion());
+        scorePopupObject.GetComponent<ScorePopupObject>().Init(scoreToAdd);
+
+        score += scoreToAdd;
+    }
 
     public int CountMonkeysOnLift() =>
         _monkeys.Count(monkey => monkey.transform.position.x > Constants.Instance.liftMaxLeftPosition);
@@ -119,7 +133,7 @@ public class GameControl : MonoBehaviour
 
     private void SpawnManagerMonkey()
     {
-        var managerSpawnX = Constants.Instance.offScreenPosition - DistanceBetweenPlayerAndManager;
+        var managerSpawnX = Constants.Instance.offScreenHorizontalPosition - SpawnDistanceBetweenPlayerAndManager;
         var managerSpawnPos = new Vector3(managerSpawnX, Constants.Instance.floorMinHeight, 0);
         var managerMonkey = Instantiate(monkeyPrefab, managerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
         managerMonkey.Init(MonkeyType.MANAGER);
@@ -128,7 +142,8 @@ public class GameControl : MonoBehaviour
 
     private void SpawnPlayerMonkey()
     {
-        var playerSpawnPos = new Vector3(Constants.Instance.offScreenPosition, Constants.Instance.floorMinHeight, 0);
+        var playerSpawnPos = new Vector3(Constants.Instance.offScreenHorizontalPosition,
+            Constants.Instance.floorMinHeight, 0);
         var playerMonkey = Instantiate(monkeyPrefab, playerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
         playerMonkey.Init(MonkeyType.PLAYER);
         _monkeys.Add(playerMonkey);
@@ -137,14 +152,15 @@ public class GameControl : MonoBehaviour
     private void SpawnRiderMonkey()
     {
         var spawnHeight = Random.Range(Constants.Instance.floorMinHeight, Constants.Instance.floorMaxHeight);
-        var spawnPos = new Vector3(Constants.Instance.offScreenPosition, spawnHeight, 0);
+        var spawnPos = new Vector3(Constants.Instance.offScreenHorizontalPosition, spawnHeight, 0);
         var newMonkey = Instantiate(monkeyPrefab, spawnPos, new Quaternion());
         var monkeyObject = newMonkey.GetComponent<MonkeyObject>();
         _monkeys.Add(monkeyObject);
 
         var allValidFloors = _allFloors.Where(floor => floor != currentFloor).ToList();
         var desiredFloor = allValidFloors[Random.Range(0, allValidFloors.Count)];
-        monkeyObject.Init(MonkeyType.RIDER, desiredFloor);
+        // monkeyObject.Init(MonkeyType.RIDER, desiredFloor);
+        monkeyObject.Init(MonkeyType.RIDER, FloorName.LIBRARY_RED);
     }
 
     public void StartMovingTo(FloorName targetFloorName)
