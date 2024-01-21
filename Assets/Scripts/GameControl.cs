@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -49,6 +50,15 @@ public class GameControl : MonoBehaviour
             currentPhase = GamePhase.PLAYER_INPUT;
             return;
         }
+
+        currentPhase = GamePhase.LIFT_MOVEMENT_FAILED;
+
+        StartCoroutine(GoToPlayerFailedPhaseAfterDelay());
+    }
+
+    private IEnumerator GoToPlayerFailedPhaseAfterDelay()
+    {
+        yield return new WaitForSeconds(2f);
 
         currentPhase = GamePhase.PLAYER_FAILED;
 

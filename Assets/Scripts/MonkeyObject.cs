@@ -52,7 +52,7 @@ public class MonkeyObject : MonoBehaviour
     private const float AudioMaxDelay = 0.5f;
     private readonly Vector3 _itemRaisedOffset = new(0.2f, 0.5f, 0);
     private float _moveSpeed = 6.0f;
-    
+
     private Vector3 _headDefaultPos;
     private Vector3 _eyesDefaultPos;
     private Vector3 _armLeftDefaultPos;
@@ -153,6 +153,8 @@ public class MonkeyObject : MonoBehaviour
 
     private void Update()
     {
+        eyes.GetComponent<SpriteRenderer>().sprite = _isAngry ? spriteEyesAngry : spriteEyesNormal;
+
         var isMoving = _targetPosition.HasValue;
         if (isMoving)
         {
@@ -162,16 +164,29 @@ public class MonkeyObject : MonoBehaviour
         else
         {
             UpdateSpritesIdle();
+
             if (_monkeyType == MonkeyType.MANAGER)
             {
                 UpdateManager();
             }
-        }
 
-        eyes.GetComponent<SpriteRenderer>().sprite = _isAngry ? spriteEyesAngry : spriteEyesNormal;
+            if (_monkeyType == MonkeyType.PLAYER)
+            {
+                UpdatePlayer();
+            }
+        }
     }
 
     private int _managerIntroConversationStage;
+
+    private void UpdatePlayer()
+    {
+        if (GameControl.Instance.currentPhase != GamePhase.LIFT_MOVEMENT &&
+            GameControl.Instance.currentPhase != GamePhase.LIFT_MOVEMENT_FAILED) return;
+
+        armLeft.GetComponent<SpriteRenderer>().sprite = spriteArmLeftUp;
+        armRight.GetComponent<SpriteRenderer>().sprite = spriteArmRightUp;
+    }
 
     private void UpdateManager()
     {
