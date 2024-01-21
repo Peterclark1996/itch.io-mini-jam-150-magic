@@ -22,13 +22,13 @@ public class MonkeyObject : MonoBehaviour
     public Sprite spriteItemFlask;
 
     public SortingGroup sortingGroup;
-
-    private const float MoveSpeed = 6.0f;
+    
     private const float EyeOffset = 0.075f;
     private const float BreatheOffset = 0.05f;
     private const float ItemHorizontalOffset = 0.4f;
     private const float ItemRaisedOffset = 0.5f;
 
+    private float _moveSpeed = 6.0f;
     private float _headDefaultHeight;
     private float _eyesDefaultHeight;
     private float _armDefaultHeight;
@@ -41,6 +41,7 @@ public class MonkeyObject : MonoBehaviour
 
     public void Init(FloorName desiredFloorName)
     {
+        _moveSpeed = 6.0f + Random.Range(-1.0f, 1.0f);
         _desiredFloorName = desiredFloorName;
 
         var itemRenderer = item.GetComponent<SpriteRenderer>();
@@ -131,7 +132,7 @@ public class MonkeyObject : MonoBehaviour
 
         var pos = transform.position;
         var distanceToTarget = pos.x - _targetPosition.Value;
-        var distanceToMove = MoveSpeed * Time.deltaTime;
+        var distanceToMove = _moveSpeed * Time.deltaTime;
 
         if (Math.Abs(distanceToTarget) <= distanceToMove)
         {
