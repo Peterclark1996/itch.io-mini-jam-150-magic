@@ -459,6 +459,7 @@ MonoBehaviour:
   leftArrow: {fileID: 2074863979}
   rightArrow: {fileID: 546053618}
   arrowPrefab: {fileID: 4523921644240916381, guid: d945e859d54b2498b87e77fd0066d3d6, type: 3}
+  gameControl: {fileID: 1938936198}
 --- !u!4 &367565362
 Transform:
   m_ObjectHideFlags: 0

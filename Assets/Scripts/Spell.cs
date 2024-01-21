@@ -13,6 +13,9 @@ public class Spell : MonoBehaviour
 
     [SerializeField]
     Transform arrowPrefab;
+
+    [SerializeField]
+    GameControl gameControl;
     
     List<KeyCombination> keyCombinations = new List<KeyCombination>();
     Dictionary<int, FloorName> floors = new Dictionary<int, FloorName>();
@@ -71,7 +74,7 @@ public class Spell : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!lockedOut) {
+        if (!lockedOut && gameControl.currentPhase == GamePhase.PLAYER_INPUT) {
             if (Input.GetButtonDown("Up")) {
                 lastFourKeysPressed.Add(Key.Up);
                 upArrow.color = Color.green;
@@ -144,7 +147,7 @@ public class Spell : MonoBehaviour
     void ValidateCombination() {
         FloorName targetFloor;
         if (floors.TryGetValue(GetKeySequenceHashCode(lastFourKeysPressed), out targetFloor)) {
-            // Call code for going to floor
+            gameControl.StartMovingTo(targetFloor);
         }
         else {
             lockedOut = true;
