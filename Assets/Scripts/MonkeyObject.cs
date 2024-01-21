@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
@@ -13,6 +14,8 @@ public class MonkeyObject : MonoBehaviour
     public GameObject legLeft;
     public GameObject legRight;
     public GameObject item;
+    public GameObject speechBubble;
+    public TextMeshPro speechTextMesh;
 
     public Sprite spriteEyesNormal;
     public Sprite spriteEyesAngry;
@@ -22,7 +25,7 @@ public class MonkeyObject : MonoBehaviour
     public Sprite spriteItemFlask;
 
     public SortingGroup sortingGroup;
-    
+
     private const float EyeOffset = 0.075f;
     private const float BreatheOffset = 0.05f;
     private const float ItemHorizontalOffset = 0.4f;
@@ -36,10 +39,34 @@ public class MonkeyObject : MonoBehaviour
     private float _itemDefaultHeight;
     private float _spawnTime;
     private FloorName _desiredFloorName;
+    private MonkeyType _monkeyType;
     private float? _targetPosition;
     private bool _isAngry;
 
-    public void Init(FloorName desiredFloorName)
+    public void Init(MonkeyType monkeyType, FloorName? desiredFloorName = null)
+    {
+        _monkeyType = monkeyType;
+        switch (monkeyType)
+        {
+            case MonkeyType.PLAYER:
+                _moveSpeed = 8.0f;
+                item.GetComponent<SpriteRenderer>().enabled = false;
+                StartMovingTo(Constants.Instance.standingSpotPlayer);
+                return;
+            case MonkeyType.MANAGER:
+                StartMovingTo(Constants.Instance.standingSpotManager);
+                return;
+            case MonkeyType.RIDER:
+                InitRiderMonkey(desiredFloorName.GetValueOrDefault());
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(monkeyType), monkeyType, null);
+        }
+
+        sortingGroup.sortingOrder = (int) (Math.Abs(transform.position.y) * 1000);
+    }
+
+    private void InitRiderMonkey(FloorName desiredFloorName)
     {
         _moveSpeed = 6.0f + Random.Range(-1.0f, 1.0f);
         _desiredFloorName = desiredFloorName;
@@ -78,8 +105,6 @@ public class MonkeyObject : MonoBehaviour
         var itemPos = item.transform.localPosition;
         item.transform.localPosition = itemPos.WithX(Util.RandomBool() ? -ItemHorizontalOffset : ItemHorizontalOffset);
 
-        sortingGroup.sortingOrder = (int) itemPos.y * 1000;
-
         StartMovingTo(Random.Range(Constants.Instance.liftMaxLeftPosition, Constants.Instance.liftMaxRightPosition));
     }
 
@@ -87,6 +112,8 @@ public class MonkeyObject : MonoBehaviour
 
     public void OnLiftArrivedAtFloor()
     {
+        if (_monkeyType != MonkeyType.RIDER) return;
+
         if (GameControl.Instance.currentFloor == _desiredFloorName)
         {
             _isAngry = false;
@@ -111,45 +138,73 @@ public class MonkeyObject : MonoBehaviour
 
     private void Update()
     {
-        UpdateMovement();
-
         var isMoving = _targetPosition.HasValue;
         if (isMoving)
         {
+            UpdateMovement(_targetPosition.Value);
             UpdateSpritesWalking();
         }
         else
         {
             UpdateSpritesIdle();
+            if (_monkeyType == MonkeyType.MANAGER)
+            {
+                UpdateManager();
+            }
         }
 
         eyes.GetComponent<SpriteRenderer>().sprite = _isAngry ? spriteEyesAngry : spriteEyesNormal;
     }
 
-    private void UpdateMovement()
-    {
-        if (!_targetPosition.HasValue) return;
+    private int _managerIntroConversationStage;
 
+    private void UpdateManager()
+    {
+        if (GameControl.Instance.currentPhase != GamePhase.INTRO) return;
+
+        if (_managerIntroConversationStage > 2)
+        {
+            speechBubble.SetActive(false);
+            GameControl.Instance.GoToMonkeyMovementPhase();
+            StartMovingTo(Constants.Instance.offScreenPosition);
+            return;
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            _managerIntroConversationStage++;
+        }
+
+        speechBubble.SetActive(true);
+        speechTextMesh.text = _managerIntroConversationStage switch
+        {
+            0 => "This is how you play blah blah blah",
+            1 => "The lifts weight is what matters!",
+            2 => "Light is the way!!!",
+            _ => ""
+        };
+    }
+
+    private void UpdateMovement(float target)
+    {
         var pos = transform.position;
-        var distanceToTarget = pos.x - _targetPosition.Value;
+        var distanceToTarget = pos.x - target;
         var distanceToMove = _moveSpeed * Time.deltaTime;
 
         if (Math.Abs(distanceToTarget) <= distanceToMove)
         {
-            transform.position = pos.WithX(_targetPosition.Value);
+            transform.position = pos.WithX(target);
             _targetPosition = null;
-            GameControl.Instance.OnMonkeyFinishedMoving();
+
+            if (_monkeyType == MonkeyType.RIDER)
+            {
+                GameControl.Instance.OnRiderMonkeyFinishedMoving();
+            }
+
             return;
         }
 
-        if (_targetPosition.Value > pos.x)
-        {
-            transform.position += new Vector3(distanceToMove, 0, 0);
-        }
-        else
-        {
-            transform.position -= new Vector3(distanceToMove, 0, 0);
-        }
+        transform.position += new Vector3(target > pos.x ? distanceToMove : -distanceToMove, 0, 0);
     }
 
     private void UpdateSpritesIdle()

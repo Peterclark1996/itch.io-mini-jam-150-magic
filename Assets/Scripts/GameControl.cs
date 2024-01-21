@@ -9,23 +9,21 @@ public class GameControl : MonoBehaviour
     public GameObject monkeyPrefab;
     public GameObject backgroundObject;
 
-    public GamePhase currentPhase = GamePhase.MONKEY_MOVEMENT;
+    public GamePhase currentPhase = GamePhase.INTRO;
     public FloorName currentFloor = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList().First();
 
     private const float TravelTimeBetweenFloors = 1.5f;
+    private const float DistanceBetweenPlayerAndManager = 3.0f;
 
     private readonly List<MonkeyObject> _monkeys = new();
     private readonly List<FloorName> _allFloors = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList();
     private FloorName? _targetFloor;
     private float? _floorChangedTime;
 
-    public int CountMonkeysOnLift() => _monkeys.Count(monkey =>
-    {
-        var monkeyX = monkey.transform.position.x;
-        return monkeyX < Constants.Instance.liftMaxRightPosition && monkeyX > Constants.Instance.liftMaxLeftPosition;
-    });
+    public int CountMonkeysOnLift() =>
+        _monkeys.Count(monkey => monkey.transform.position.x > Constants.Instance.liftMaxLeftPosition);
 
-    public void OnMonkeyFinishedMoving()
+    public void OnRiderMonkeyFinishedMoving()
     {
         var areAnyMonkeysMoving = _monkeys.Any(monkey => monkey.IsMoving());
         if (areAnyMonkeysMoving) return;
@@ -42,7 +40,16 @@ public class GameControl : MonoBehaviour
 
     private void Start()
     {
-        SpawnMonkey();
+        var playerSpawnPos = new Vector3(Constants.Instance.offScreenPosition, Constants.Instance.floorMinHeight, 0);
+        var playerMonkey = Instantiate(monkeyPrefab, playerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
+        playerMonkey.Init(MonkeyType.PLAYER);
+        _monkeys.Add(playerMonkey);
+
+        var managerSpawnX = Constants.Instance.offScreenPosition - DistanceBetweenPlayerAndManager;
+        var managerSpawnPos = new Vector3(managerSpawnX, Constants.Instance.floorMinHeight, 0);
+        var managerMonkey = Instantiate(monkeyPrefab, managerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
+        managerMonkey.Init(MonkeyType.MANAGER);
+        _monkeys.Add(managerMonkey);
     }
 
     private void Update()
@@ -67,14 +74,13 @@ public class GameControl : MonoBehaviour
             currentFloor = _targetFloor.Value;
             _targetFloor = null;
             _floorChangedTime = null;
-            
+
             foreach (var monkeyObject in _monkeys)
             {
                 monkeyObject.OnLiftArrivedAtFloor();
             }
 
-            currentPhase = GamePhase.MONKEY_MOVEMENT;
-            SpawnMonkey();
+            GoToMonkeyMovementPhase();
 
             return;
         }
@@ -87,17 +93,23 @@ public class GameControl : MonoBehaviour
         backgroundObject.transform.position = Vector3.Lerp(startPos, targetPos, movementProgressSmoothed);
     }
 
-    private void SpawnMonkey()
+    public void GoToMonkeyMovementPhase()
+    {
+        currentPhase = GamePhase.MONKEY_MOVEMENT;
+        SpawnRiderMonkey();
+    }
+
+    private void SpawnRiderMonkey()
     {
         var spawnHeight = Random.Range(Constants.Instance.floorMinHeight, Constants.Instance.floorMaxHeight);
         var spawnPos = new Vector3(Constants.Instance.offScreenPosition, spawnHeight, 0);
         var newMonkey = Instantiate(monkeyPrefab, spawnPos, new Quaternion());
         var monkeyObject = newMonkey.GetComponent<MonkeyObject>();
         _monkeys.Add(monkeyObject);
-        
+
         var allValidFloors = _allFloors.Where(floor => floor != currentFloor).ToList();
         var desiredFloor = allValidFloors[Random.Range(0, allValidFloors.Count)];
-        monkeyObject.Init(desiredFloor);
+        monkeyObject.Init(MonkeyType.RIDER, desiredFloor);
     }
 
     public void StartMovingTo(FloorName targetFloorName)

@@ -7,6 +7,8 @@ public class Constants : MonoBehaviour
     public float offScreenPosition;
     public float floorMinHeight;
     public float floorMaxHeight;
+    public float standingSpotManager;
+    public float standingSpotPlayer;
     
     public static Constants Instance;
 
