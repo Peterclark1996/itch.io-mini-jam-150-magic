@@ -30,7 +30,37 @@ public class GameControl : MonoBehaviour
         var areAnyMonkeysMoving = _monkeys.Any(monkey => monkey.IsMoving());
         if (areAnyMonkeysMoving) return;
 
-        currentPhase = GamePhase.PLAYER_INPUT;
+        if (CountMonkeysOnLift() <= Constants.Instance.maxOccupancyLimit)
+        {
+            currentPhase = GamePhase.PLAYER_INPUT;
+            return;
+        }
+
+        currentPhase = GamePhase.PLAYER_FAILED;
+
+        foreach (var monkeyObject in _monkeys)
+        {
+            monkeyObject.LeaveAngrily();
+        }
+
+        SpawnManagerMonkey();
+    }
+
+    public void DestroyMonkey(MonkeyObject monkey)
+    {
+        _monkeys.Remove(monkey);
+        Destroy(monkey.gameObject);
+    }
+
+    public void GoToGameOverScreenPhase()
+    {
+        currentPhase = GamePhase.GAME_OVER_SCREEN;
+    }
+
+    public void GoToMonkeyMovementPhase()
+    {
+        currentPhase = GamePhase.MONKEY_MOVEMENT;
+        SpawnRiderMonkey();
     }
 
     public static GameControl Instance;
@@ -42,16 +72,8 @@ public class GameControl : MonoBehaviour
 
     private void Start()
     {
-        var playerSpawnPos = new Vector3(Constants.Instance.offScreenPosition, Constants.Instance.floorMinHeight, 0);
-        var playerMonkey = Instantiate(monkeyPrefab, playerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
-        playerMonkey.Init(MonkeyType.PLAYER);
-        _monkeys.Add(playerMonkey);
-
-        var managerSpawnX = Constants.Instance.offScreenPosition - DistanceBetweenPlayerAndManager;
-        var managerSpawnPos = new Vector3(managerSpawnX, Constants.Instance.floorMinHeight, 0);
-        var managerMonkey = Instantiate(monkeyPrefab, managerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
-        managerMonkey.Init(MonkeyType.MANAGER);
-        _monkeys.Add(managerMonkey);
+        SpawnPlayerMonkey();
+        SpawnManagerMonkey();
     }
 
     private void Update()
@@ -95,10 +117,21 @@ public class GameControl : MonoBehaviour
         backgroundObject.transform.position = Vector3.Lerp(startPos, targetPos, movementProgressSmoothed);
     }
 
-    public void GoToMonkeyMovementPhase()
+    private void SpawnManagerMonkey()
     {
-        currentPhase = GamePhase.MONKEY_MOVEMENT;
-        SpawnRiderMonkey();
+        var managerSpawnX = Constants.Instance.offScreenPosition - DistanceBetweenPlayerAndManager;
+        var managerSpawnPos = new Vector3(managerSpawnX, Constants.Instance.floorMinHeight, 0);
+        var managerMonkey = Instantiate(monkeyPrefab, managerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
+        managerMonkey.Init(MonkeyType.MANAGER);
+        _monkeys.Add(managerMonkey);
+    }
+
+    private void SpawnPlayerMonkey()
+    {
+        var playerSpawnPos = new Vector3(Constants.Instance.offScreenPosition, Constants.Instance.floorMinHeight, 0);
+        var playerMonkey = Instantiate(monkeyPrefab, playerSpawnPos, new Quaternion()).GetComponent<MonkeyObject>();
+        playerMonkey.Init(MonkeyType.PLAYER);
+        _monkeys.Add(playerMonkey);
     }
 
     private void SpawnRiderMonkey()

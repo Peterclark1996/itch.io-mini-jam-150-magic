@@ -13,6 +13,6 @@ public class OccupancyObject : MonoBehaviour
 
     private void Update()
     {
-        _numberTextMesh.text = $"{GameControl.Instance.CountMonkeysOnLift()}/8";
+        _numberTextMesh.text = $"{GameControl.Instance.CountMonkeysOnLift()}/{Constants.Instance.maxOccupancyLimit}";
     }
 }

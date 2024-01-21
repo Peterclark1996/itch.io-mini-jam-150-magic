@@ -3,5 +3,7 @@ public enum GamePhase
     INTRO,
     MONKEY_MOVEMENT,
     PLAYER_INPUT,
-    LIFT_MOVEMENT
+    LIFT_MOVEMENT,
+    PLAYER_FAILED,
+    GAME_OVER_SCREEN
 }

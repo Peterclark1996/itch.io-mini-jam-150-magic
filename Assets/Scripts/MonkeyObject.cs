@@ -110,6 +110,14 @@ public class MonkeyObject : MonoBehaviour
 
     public bool IsMoving() => _targetPosition.HasValue;
 
+    public void LeaveAngrily()
+    {
+        if (_monkeyType != MonkeyType.RIDER) return;
+
+        _isAngry = true;
+        StartMovingTo(Constants.Instance.offScreenPosition);
+    }
+
     public void OnLiftArrivedAtFloor()
     {
         if (_monkeyType != MonkeyType.RIDER) return;
@@ -160,12 +168,22 @@ public class MonkeyObject : MonoBehaviour
 
     private void UpdateManager()
     {
-        if (GameControl.Instance.currentPhase != GamePhase.INTRO) return;
+        var playerFailed = GameControl.Instance.currentPhase == GamePhase.PLAYER_FAILED;
+        if (GameControl.Instance.currentPhase != GamePhase.INTRO && !playerFailed) return;
 
         if (_managerIntroConversationStage > 2)
         {
             speechBubble.SetActive(false);
-            GameControl.Instance.GoToMonkeyMovementPhase();
+
+            if (playerFailed)
+            {
+                GameControl.Instance.GoToGameOverScreenPhase();
+            }
+            else
+            {
+                GameControl.Instance.GoToMonkeyMovementPhase();
+            }
+
             StartMovingTo(Constants.Instance.offScreenPosition);
             return;
         }
@@ -175,11 +193,13 @@ public class MonkeyObject : MonoBehaviour
             _managerIntroConversationStage++;
         }
 
+        _isAngry = playerFailed;
+
         speechBubble.SetActive(true);
         speechTextMesh.text = _managerIntroConversationStage switch
         {
-            0 => "This is how you play blah blah blah",
-            1 => "The lifts weight is what matters!",
+            0 => playerFailed ? "The lift is too heavy, this is a disaster!" : "Take the monkey to their floor",
+            1 => playerFailed ? "You're fired!" : "The lifts weight is what matters!",
             2 => "Light is the way!!!",
             _ => ""
         };
@@ -197,6 +217,11 @@ public class MonkeyObject : MonoBehaviour
             _targetPosition = null;
 
             GameControl.Instance.OnMonkeyFinishedMoving();
+
+            if ((int) target == (int) Constants.Instance.offScreenPosition)
+            {
+                GameControl.Instance.DestroyMonkey(this);
+            }
 
             return;
         }

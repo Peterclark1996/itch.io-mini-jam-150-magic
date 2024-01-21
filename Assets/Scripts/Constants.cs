@@ -9,6 +9,7 @@ public class Constants : MonoBehaviour
     public float floorMaxHeight;
     public float standingSpotManager;
     public float standingSpotPlayer;
+    public float maxOccupancyLimit;
     
     public static Constants Instance;
 
