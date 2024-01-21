@@ -34,7 +34,7 @@ public class Spell : MonoBehaviour
     {
         Instance = gameObject.GetComponent<Spell>();
         List<FloorName> allFloors = Enum.GetValues(typeof(FloorName)).Cast<FloorName>().ToList();
-        float floorOffset = 1.5f;
+        float floorOffset = 2f;
         Vector3 scale = new Vector3(0.25f, 0.25f, 1f);
         foreach (var floor in allFloors) {
             var combination = new List<Key>() {
