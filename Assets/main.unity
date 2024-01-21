@@ -2732,6 +2732,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monkeyPrefab: {fileID: 804925928702810796, guid: 49b8b616942301a43b81917110f8cac9, type: 3}
   monkeyManagerPrefab: {fileID: 804925928702810796, guid: 7411ed5dfb207e944be37e765f82115e, type: 3}
+  monkeyPlayerPrefab: {fileID: 804925928702810796, guid: 45d263b0fb9e20440b814f90a39778bd, type: 3}
   scorePopupPrefab: {fileID: 3316052647352501412, guid: 220000e2a9e0c224eb712c5a5d5790ca, type: 3}
   backgroundObject: {fileID: 873074883}
   currentPhase: 0
@@ -2950,6 +2951,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2030260784}
+  - component: {fileID: 2030260785}
   m_Layer: 0
   m_Name: EdgeCutoff
   m_TagString: Untagged
@@ -2976,6 +2978,18 @@ Transform:
   - {fileID: 1633748749}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!210 &2030260785
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030260783}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 9999
+  m_SortAtRoot: 0
 --- !u!1001 &2074863978
 PrefabInstance:
   m_ObjectHideFlags: 0

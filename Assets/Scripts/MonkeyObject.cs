@@ -78,13 +78,14 @@ public class MonkeyObject : MonoBehaviour
         {
             case MonkeyType.PLAYER:
                 _moveSpeed = 8.0f;
-                item.GetComponent<SpriteRenderer>().enabled = false;
-                hat.GetComponent<SpriteRenderer>().enabled = false;
+                item.SetActive(false);
+                hat.SetActive(false);
+                eyes.SetActive(false);
                 StartMovingTo(Constants.Instance.standingSpotPlayer);
                 return;
             case MonkeyType.MANAGER:
-                item.GetComponent<SpriteRenderer>().enabled = false;
-                hat.GetComponent<SpriteRenderer>().enabled = false;
+                item.SetActive(false);
+                hat.SetActive(false);
                 StartMovingTo(Constants.Instance.standingSpotManager);
                 return;
             case MonkeyType.RIDER:
@@ -197,8 +198,6 @@ public class MonkeyObject : MonoBehaviour
         }
     }
 
-    private int _managerIntroConversationStage;
-
     private void UpdatePlayer()
     {
         if (GameControl.Instance.currentPhase != GamePhase.LIFT_MOVEMENT &&
@@ -208,6 +207,7 @@ public class MonkeyObject : MonoBehaviour
         armRight.GetComponent<SpriteRenderer>().sprite = spriteArmRightUp;
     }
 
+    private int _managerIntroConversationStage;
     private void UpdateManager()
     {
         var playerFailed = GameControl.Instance.currentPhase == GamePhase.PLAYER_FAILED;
