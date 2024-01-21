@@ -86,6 +86,12 @@ public class Spell : MonoBehaviour
     void Update()
     {
         if (!lockedOut && gameControl.currentPhase == GamePhase.PLAYER_INPUT) {
+            if (upArrow.color == Color.grey) {
+                upArrow.color = Color.white;
+                downArrow.color = Color.white;
+                leftArrow.color = Color.white;
+                rightArrow.color = Color.white;
+            }
             if (Input.GetButtonDown("Up")) {
                 lastFourKeysPressed.Add(Key.Up);
                 upArrow.color = Color.green;
@@ -123,18 +129,24 @@ public class Spell : MonoBehaviour
                 rightArrow.color = Color.white;
             }
         }
-        else {
+        else if (lockedOut) {
             upArrow.color = Color.red;
             downArrow.color = Color.red;
             leftArrow.color = Color.red;
             rightArrow.color = Color.red;
-            if (Time.time - lockoutStart > 2f) {
+            if (Time.time - lockoutStart > 0.5f) {
                 lockedOut = false;
                 upArrow.color = Color.white;
                 downArrow.color = Color.white;
                 leftArrow.color = Color.white;
                 rightArrow.color = Color.white;
             }
+        }
+        else {
+            upArrow.color = Color.grey;
+            downArrow.color = Color.grey;
+            leftArrow.color = Color.grey;
+            rightArrow.color = Color.grey;
         }
         
     }
