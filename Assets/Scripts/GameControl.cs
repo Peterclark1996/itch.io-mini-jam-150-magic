@@ -159,8 +159,7 @@ public class GameControl : MonoBehaviour
 
         var allValidFloors = _allFloors.Where(floor => floor != currentFloor).ToList();
         var desiredFloor = allValidFloors[Random.Range(0, allValidFloors.Count)];
-        // monkeyObject.Init(MonkeyType.RIDER, desiredFloor);
-        monkeyObject.Init(MonkeyType.RIDER, FloorName.LIBRARY_RED);
+        monkeyObject.Init(MonkeyType.RIDER, desiredFloor);
     }
 
     public void StartMovingTo(FloorName targetFloorName)
