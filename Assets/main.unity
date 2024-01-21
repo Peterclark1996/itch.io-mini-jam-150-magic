@@ -1368,12 +1368,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0.6324146, z: 15.698769, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_renderer: {fileID: 1362171960}
-  m_maskType: 0
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
+  m_hasFontAssetChanged: 0
+  m_renderer: {fileID: 1362171960}
+  m_maskType: 0
 --- !u!23 &1362171960
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1693,12 +1693,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 14.099131, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_renderer: {fileID: 1468817124}
-  m_maskType: 0
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
+  m_hasFontAssetChanged: 0
+  m_renderer: {fileID: 1468817124}
+  m_maskType: 0
 --- !u!23 &1468817124
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2142,8 +2142,8 @@ MonoBehaviour:
   liftMaxRightPosition: 2
   offScreenHorizontalPosition: -13
   offScreenVerticalPosition: -10
-  floorMinHeight: -3
-  floorMaxHeight: -2.5
+  floorMinHeight: -2.55
+  floorMaxHeight: -2
   standingSpotManager: -3
   standingSpotPlayer: 3.5
   maxOccupancyLimit: 6

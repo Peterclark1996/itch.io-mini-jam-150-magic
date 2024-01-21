@@ -9,6 +9,7 @@ public class MonkeyObject : MonoBehaviour
     public GameObject head;
     public GameObject eyes;
     public GameObject body;
+    public GameObject tail;
     public GameObject armLeft;
     public GameObject armRight;
     public GameObject legLeft;
@@ -19,24 +20,35 @@ public class MonkeyObject : MonoBehaviour
 
     public Sprite spriteEyesNormal;
     public Sprite spriteEyesAngry;
-    public Sprite spriteLegUp;
-    public Sprite spriteLegDown;
-    public Sprite spriteItemBook;
-    public Sprite spriteItemFlask;
+    public Sprite spriteLegLeftUp;
+    public Sprite spriteLegLeftDown;
+    public Sprite spriteLegRightUp;
+    public Sprite spriteLegRightDown;
+    public Sprite spriteArmLeftUp;
+    public Sprite spriteArmLeftDown;
+    public Sprite spriteArmRightUp;
+    public Sprite spriteArmRightDown;
+    public Sprite spriteItemBookRed;
+    public Sprite spriteItemBookBlue;
+    public Sprite spriteItemBookGreen;
+    public Sprite spriteItemFlaskRed;
+    public Sprite spriteItemFlaskBlue;
+    public Sprite spriteItemFlaskGreen;
 
     public SortingGroup sortingGroup;
 
-    private const float EyeOffset = 0.075f;
-    private const float BreatheOffset = 0.05f;
-    private const float ItemHorizontalOffset = 0.4f;
-    private const float ItemRaisedOffset = 0.5f;
+    private const float EyeOffset = 0.03f;
+    private const float BreatheOffset = 0.03f;
 
+    private readonly Vector3 _itemRaisedOffset = new(0.2f, 0.5f, 0);
     private float _moveSpeed = 6.0f;
-    private float _headDefaultHeight;
-    private float _eyesDefaultHeight;
-    private float _armDefaultHeight;
-    private float _bodyDefaultHeight;
-    private float _itemDefaultHeight;
+    private Vector3 _headDefaultPos;
+    private Vector3 _eyesDefaultPos;
+    private Vector3 _armLeftDefaultPos;
+    private Vector3 _armRightDefaultPos;
+    private Vector3 _bodyDefaultPos;
+    private Vector3 _tailDefaultPos;
+    private Vector3 _itemDefaultPos;
     private float _spawnTime;
     private FloorName _desiredFloorName;
     private MonkeyType _monkeyType;
@@ -71,39 +83,16 @@ public class MonkeyObject : MonoBehaviour
         _moveSpeed = 6.0f + Random.Range(-1.0f, 1.0f);
         _desiredFloorName = desiredFloorName;
 
-        var itemRenderer = item.GetComponent<SpriteRenderer>();
-        switch (desiredFloorName)
+        item.GetComponent<SpriteRenderer>().sprite = desiredFloorName switch
         {
-            case FloorName.LIBRARY_RED:
-                itemRenderer.sprite = spriteItemBook;
-                itemRenderer.color = new Color(0.8f, 0.2f, 0.2f);
-                break;
-            case FloorName.LIBRARY_BLUE:
-                itemRenderer.sprite = spriteItemBook;
-                itemRenderer.color = new Color(0.2f, 0.2f, 0.8f);
-                break;
-            case FloorName.LIBRARY_GREEN:
-                itemRenderer.sprite = spriteItemBook;
-                itemRenderer.color = new Color(0.2f, 0.8f, 0.2f);
-                break;
-            case FloorName.ALCHEMY_RED:
-                itemRenderer.sprite = spriteItemFlask;
-                itemRenderer.color = new Color(0.8f, 0.2f, 0.2f);
-                break;
-            case FloorName.ALCHEMY_BLUE:
-                itemRenderer.sprite = spriteItemFlask;
-                itemRenderer.color = new Color(0.2f, 0.2f, 0.8f);
-                break;
-            case FloorName.ALCHEMY_GREEN:
-                itemRenderer.sprite = spriteItemFlask;
-                itemRenderer.color = new Color(0.2f, 0.8f, 0.2f);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(desiredFloorName), desiredFloorName, null);
-        }
-
-        var itemPos = item.transform.localPosition;
-        item.transform.localPosition = itemPos.WithX(Util.RandomBool() ? -ItemHorizontalOffset : ItemHorizontalOffset);
+            FloorName.LIBRARY_RED => spriteItemBookRed,
+            FloorName.LIBRARY_BLUE => spriteItemBookBlue,
+            FloorName.LIBRARY_GREEN => spriteItemBookGreen,
+            FloorName.ALCHEMY_RED => spriteItemFlaskRed,
+            FloorName.ALCHEMY_BLUE => spriteItemFlaskBlue,
+            FloorName.ALCHEMY_GREEN => spriteItemFlaskGreen,
+            _ => throw new ArgumentOutOfRangeException(nameof(desiredFloorName), desiredFloorName, null)
+        };
 
         StartMovingTo(Random.Range(Constants.Instance.liftMaxLeftPosition, Constants.Instance.liftMaxRightPosition));
     }
@@ -135,11 +124,13 @@ public class MonkeyObject : MonoBehaviour
 
     private void Start()
     {
-        _headDefaultHeight = head.transform.localPosition.y;
-        _eyesDefaultHeight = eyes.transform.localPosition.y;
-        _armDefaultHeight = armLeft.transform.localPosition.y;
-        _bodyDefaultHeight = body.transform.localPosition.y;
-        _itemDefaultHeight = item.transform.localPosition.y;
+        _headDefaultPos = head.transform.localPosition;
+        _eyesDefaultPos = eyes.transform.localPosition;
+        _armLeftDefaultPos = armLeft.transform.localPosition;
+        _armRightDefaultPos = armRight.transform.localPosition;
+        _bodyDefaultPos = body.transform.localPosition;
+        _tailDefaultPos = tail.transform.localPosition;
+        _itemDefaultPos = item.transform.localPosition;
         _spawnTime = Time.time;
     }
 
@@ -232,77 +223,67 @@ public class MonkeyObject : MonoBehaviour
 
     private void UpdateSpritesIdle()
     {
-        var eyePos = eyes.transform.localPosition;
-
-        legRight.GetComponent<SpriteRenderer>().sprite = spriteLegDown;
-        legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegDown;
+        legRight.GetComponent<SpriteRenderer>().sprite = spriteLegRightDown;
+        legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegLeftDown;
         eyes.transform.localPosition = new Vector3(0, 0, 0);
-
-        var headPos = head.transform.localPosition;
-        var armLeftPos = armLeft.transform.localPosition;
-        var armRightPos = armRight.transform.localPosition;
-        var itemPos = item.transform.localPosition;
-        var bodyPos = body.transform.localPosition;
 
         if (IsFrameAlternative(2))
         {
-            head.transform.localPosition = headPos.WithY(_headDefaultHeight);
-            eyes.transform.localPosition = eyePos.WithY(_eyesDefaultHeight).WithX(0);
-            armLeft.transform.localPosition = armLeftPos.WithY(_armDefaultHeight);
-            armRight.transform.localPosition = armRightPos.WithY(_armDefaultHeight);
-            item.transform.localPosition = itemPos.WithY(_itemDefaultHeight);
-            body.transform.localPosition = bodyPos.WithY(_bodyDefaultHeight);
+            head.transform.localPosition = _headDefaultPos;
+            eyes.transform.localPosition = _eyesDefaultPos;
+            armLeft.transform.localPosition = _armLeftDefaultPos;
+            armRight.transform.localPosition = _armRightDefaultPos;
+            item.transform.localPosition = _itemDefaultPos;
+            body.transform.localPosition = _bodyDefaultPos;
+            tail.transform.localPosition = _tailDefaultPos;
 
-            armLeft.transform.eulerAngles = new Vector3(0, 0, 0);
-            armRight.transform.eulerAngles = new Vector3(0, 180, 0);
+            armLeft.GetComponent<SpriteRenderer>().sprite = spriteArmLeftDown;
+            armRight.GetComponent<SpriteRenderer>().sprite = spriteArmRightDown;
         }
         else
         {
-            head.transform.localPosition = headPos.WithY(_headDefaultHeight - BreatheOffset - BreatheOffset);
-            eyes.transform.localPosition = eyePos.WithY(_eyesDefaultHeight - BreatheOffset - BreatheOffset).WithX(0);
-            armLeft.transform.localPosition = armLeftPos.WithY(_armDefaultHeight - BreatheOffset);
-            armRight.transform.localPosition = armRightPos.WithY(_armDefaultHeight - BreatheOffset);
-            body.transform.localPosition = bodyPos.WithY(_bodyDefaultHeight - BreatheOffset);
+            head.transform.localPosition = _headDefaultPos.WithY(_headDefaultPos.y - BreatheOffset - BreatheOffset);
+            eyes.transform.localPosition = _eyesDefaultPos.WithY(_eyesDefaultPos.y - BreatheOffset - BreatheOffset);
+            armLeft.transform.localPosition = _armLeftDefaultPos.WithY(_armLeftDefaultPos.y - BreatheOffset);
+            armRight.transform.localPosition = _armRightDefaultPos.WithY(_armRightDefaultPos.y - BreatheOffset);
+            body.transform.localPosition = _bodyDefaultPos.WithY(_bodyDefaultPos.y - BreatheOffset);
+            tail.transform.localPosition = _tailDefaultPos.WithY(_tailDefaultPos.y - BreatheOffset);
 
-            if (!_isAngry)
-            {
-                item.transform.localPosition = itemPos.WithY(_itemDefaultHeight - BreatheOffset);
-                return;
-            }
+            var newItemPos = _itemDefaultPos.WithY(_itemDefaultPos.y - BreatheOffset);
+            item.transform.localPosition = _isAngry ? newItemPos + _itemRaisedOffset : newItemPos;
 
-            item.transform.localPosition = itemPos.WithY(_itemDefaultHeight - BreatheOffset + ItemRaisedOffset);
-            armLeft.transform.eulerAngles = new Vector3(180, 0, 0);
-            armRight.transform.eulerAngles = new Vector3(180, 180, 0);
+            armLeft.GetComponent<SpriteRenderer>().sprite = _isAngry ? spriteArmLeftUp : spriteArmLeftDown;
+            armRight.GetComponent<SpriteRenderer>().sprite = _isAngry ? spriteArmRightUp : spriteArmRightDown;
         }
     }
 
     private void UpdateSpritesWalking()
     {
+        armLeft.GetComponent<SpriteRenderer>().sprite = spriteArmLeftDown;
+        armRight.GetComponent<SpriteRenderer>().sprite = spriteArmRightDown;
+
         if (IsFrameAlternative(5))
         {
-            legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegUp;
-            legRight.GetComponent<SpriteRenderer>().sprite = spriteLegDown;
+            legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegLeftUp;
+            legRight.GetComponent<SpriteRenderer>().sprite = spriteLegRightDown;
         }
         else
         {
-            legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegDown;
-            legRight.GetComponent<SpriteRenderer>().sprite = spriteLegUp;
+            legLeft.GetComponent<SpriteRenderer>().sprite = spriteLegLeftDown;
+            legRight.GetComponent<SpriteRenderer>().sprite = spriteLegRightUp;
         }
 
         var pos = transform.position;
         var movingRight = _targetPosition > pos.x;
-        eyes.transform.localPosition = eyes.transform.localPosition
-            .WithX(movingRight ? EyeOffset : -EyeOffset)
-            .WithY(_eyesDefaultHeight);
+        eyes.transform.localPosition =
+            _eyesDefaultPos.WithX(_eyesDefaultPos.x + (movingRight ? EyeOffset : -EyeOffset));
 
-        head.transform.localPosition = head.transform.localPosition.WithY(_headDefaultHeight);
-        armLeft.transform.localPosition = armLeft.transform.localPosition.WithY(_armDefaultHeight);
-        armRight.transform.localPosition = armRight.transform.localPosition.WithY(_armDefaultHeight);
-        item.transform.localPosition = item.transform.localPosition.WithY(_itemDefaultHeight);
-        body.transform.localPosition = body.transform.localPosition.WithY(_bodyDefaultHeight);
-
-        armLeft.transform.eulerAngles = new Vector3(0, 0, 0);
-        armRight.transform.eulerAngles = new Vector3(0, 180, 0);
+        head.transform.localPosition = _headDefaultPos;
+        armLeft.transform.localPosition = _armLeftDefaultPos;
+        armRight.transform.localPosition = _armRightDefaultPos;
+        item.transform.localPosition = _itemDefaultPos;
+        body.transform.localPosition = _bodyDefaultPos;
+        tail.transform.localPosition = _tailDefaultPos;
     }
 
     private bool IsFrameAlternative(int animationSpeed)
