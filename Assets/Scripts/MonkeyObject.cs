@@ -234,7 +234,7 @@ public class MonkeyObject : MonoBehaviour
             return;
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Util.IsAnyKeyPressed())
         {
             _managerIntroConversationStage++;
 
