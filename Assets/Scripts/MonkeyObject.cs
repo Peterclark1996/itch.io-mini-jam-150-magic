@@ -115,6 +115,7 @@ public class MonkeyObject : MonoBehaviour
         if (_monkeyType != MonkeyType.RIDER) return;
 
         _isAngry = true;
+        MakeNoise();
         StartMovingTo(Constants.Instance.offScreenHorizontalPosition);
     }
 
