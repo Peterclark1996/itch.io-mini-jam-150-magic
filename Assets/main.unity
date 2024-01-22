@@ -2777,7 +2777,7 @@ MonoBehaviour:
   floorMaxHeight: -2
   standingSpotManager: -1.3
   standingSpotPlayer: 3.5
-  maxOccupancyLimit: 6
+  maxOccupancyLimit: 4
 --- !u!82 &1938936201
 AudioSource:
   m_ObjectHideFlags: 0
